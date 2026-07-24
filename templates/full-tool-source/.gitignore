@@ -1,0 +1,8 @@
+﻿.secrets/
+.wrangler/
+node_modules/
+*.pyc
+__pycache__/
+public/index.before-*.html
+dist/
+

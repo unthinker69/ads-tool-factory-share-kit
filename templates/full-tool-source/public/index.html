@@ -1,0 +1,3256 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__PRODUCT_NAME__ Ad Copy Generator</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red: #e03a3a;
+  --red-dark: #c42d2d;
+  --bg: #f0efed;
+  --surface: #ffffff;
+  --surface-1: #f7f6f5;
+  --border: rgba(0,0,0,0.09);
+  --border-strong: rgba(0,0,0,0.16);
+  --text: #1a1a18;
+  --text-2: #5f5e5a;
+  --text-3: #999894;
+  --radius: 8px;
+  --green: #1d9e75;
+  --amber: #ef9f27;
+  --danger: #e24b4a;
+  --bg-danger: #fcebeb;
+  --text-danger: #791f1f;
+  --border-danger: #f09595;
+  --left-w: 340px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161514;
+    --surface: #242220;
+    --surface-1: #1e1c1b;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.15);
+    --text: #f0ede8;
+    --text-2: #b4b2a9;
+    --text-3: #777570;
+    --bg-danger: #3d1a1a;
+    --text-danger: #f09595;
+    --border-danger: #791f1f;
+  }
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Top bar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 1.5rem;
+  height: 52px;
+  border-bottom: 0.5px solid var(--border-strong);
+  background: var(--surface);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.rn-logo {
+  width: 28px; height: 28px;
+  background: var(--red);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.rn-logo span { color: #fff; font-size: 7.5px; font-weight: 700; text-align: center; line-height: 1.15; }
+
+.app-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.app-badge {
+  font-size: 10px; color: var(--text-3);
+  background: var(--surface-1);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 4px; padding: 2px 7px;
+}
+
+.key-bar {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 7px;
+}
+.key-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--text-3); flex-shrink: 0;
+  transition: background 0.2s;
+}
+.key-dot.active { background: var(--green); }
+.key-label {
+  font-size: 12px; color: var(--text-2);
+  max-width: 200px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.key-label.set { color: var(--text); }
+.key-mgr-btn {
+  padding: 4px 9px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+  color: var(--text-2); font-size: 11px;
+  font-family: inherit; cursor: pointer;
+  display: flex; align-items: center; gap: 3px;
+  transition: all 0.12s; white-space: nowrap;
+}
+.key-mgr-btn:hover { color: var(--text); border-color: var(--text-3); }
+.key-mgr-btn i { font-size: 12px; }
+
+/* ── Layout ── */
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 52px);
+}
+
+/* ── Left panel ── */
+.left {
+  width: var(--left-w);
+  min-width: var(--left-w);
+  border-right: 0.5px solid var(--border-strong);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.left-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.left-scroll::-webkit-scrollbar { width: 4px; }
+.left-scroll::-webkit-scrollbar-track { background: transparent; }
+.left-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+.gen-wrap {
+  padding: 0.75rem 1rem;
+  border-top: 0.5px solid var(--border-strong);
+  background: var(--surface);
+}
+
+.gen-btn {
+  width: 100%; height: 38px;
+  background: var(--red); color: #fff;
+  border: none; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 6px;
+  transition: background 0.12s, transform 0.1s;
+}
+.gen-btn:hover { background: var(--red-dark); }
+.gen-btn:active { transform: scale(0.98); }
+.gen-btn:disabled { background: var(--border-strong); color: var(--text-3); cursor: not-allowed; transform: none; }
+.gen-btn i { font-size: 15px; }
+
+/* ── Right panel ── */
+.right {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg);
+}
+
+.right::-webkit-scrollbar { width: 5px; }
+.right::-webkit-scrollbar-track { background: transparent; }
+.right::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+.right-empty {
+  height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px; color: var(--text-3);
+  user-select: none;
+}
+.right-empty i { font-size: 36px; opacity: 0.3; }
+.right-empty p { font-size: 13px; }
+
+/* ── Sections ── */
+.sec {
+  background: var(--surface-1);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+}
+
+.sec-title {
+  font-size: 10px; font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 9px;
+  display: flex; align-items: center; gap: 4px;
+}
+.sec-title i { font-size: 12px; }
+
+.field-label {
+  font-size: 11px; color: var(--text-2);
+  font-weight: 500; margin-bottom: 6px;
+}
+.field-label span { font-weight: 400; color: var(--text-3); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.chip {
+  padding: 3px 9px; border-radius: 14px;
+  border: 0.5px solid var(--border-strong);
+  background: var(--surface);
+  font-size: 11px; color: var(--text-2);
+  cursor: pointer; transition: all 0.12s;
+  user-select: none; white-space: nowrap; line-height: 1.5;
+}
+.chip:hover { border-color: var(--text-3); color: var(--text); }
+.chip.on { background: var(--red); border-color: var(--red); color: #fff; }
+
+.sub-row { margin-top: 8px; }
+
+.qty-wrap { display: flex; align-items: center; gap: 7px; }
+.qty-wrap input {
+  width: 52px; height: 30px; text-align: center;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface); color: var(--text);
+  font-size: 12px; font-family: inherit;
+}
+.qty-wrap input:focus { outline: none; border-color: var(--red); }
+.qty-wrap span { font-size: 11px; color: var(--text-3); }
+
+.col2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ── Results ── */
+.batch-meta {
+  font-size: 11px; color: var(--text-3);
+  display: flex; align-items: center; gap: 5px;
+  margin-bottom: 12px;
+}
+.batch-meta i { color: var(--green); font-size: 13px; }
+
+.res-section { margin-bottom: 20px; }
+
+.res-label {
+  font-size: 10px; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  margin: 0 0 8px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+@media (max-width: 900px) { .cards-grid { grid-template-columns: 1fr; } }
+
+.copy-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  display: flex; flex-direction: column; gap: 7px;
+}
+.card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.tag { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+.t-short  { background: #faeeda; color: #633806; }
+.t-long   { background: #e6f1fb; color: #0c447c; }
+.t-region { background: #eeedfe; color: #3c3489; }
+.t-lang   { background: #e1f5ee; color: #085041; }
+.t-warn   { background: #fcebeb; color: #791f1f; }
+
+@media (prefers-color-scheme: dark) {
+  .t-short  { background: #412402; color: #fac775; }
+  .t-long   { background: #042c53; color: #85b7eb; }
+  .t-region { background: #26215c; color: #afa9ec; }
+  .t-lang   { background: #04342c; color: #5dcaa5; }
+  .t-warn   { background: #501313; color: #f09595; }
+}
+
+.copy-body {
+  font-size: 13px; color: var(--text);
+  line-height: 1.6;
+  word-break: break-word;
+  flex: 1;
+}
+
+/* Score indicators */
+.score-block { display: flex; flex-direction: column; gap: 4px; }
+.score-row { display: flex; align-items: center; gap: 6px; }
+.score-label { font-size: 10px; color: var(--text-3); width: 56px; flex-shrink: 0; }
+.score-bar-wrap { flex: 1; height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+.score-bar { height: 100%; border-radius: 2px; transition: width .3s; }
+.score-val { font-size: 10px; font-weight: 600; width: 20px; text-align: right; flex-shrink: 0; }
+.sc-red    { background: #e24b4a; color: #e24b4a; }
+.sc-amber  { background: #ef9f27; color: #854f0b; }
+.sc-green  { background: #1d9e75; color: #085041; }
+
+.score-total {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 5px; border-top: 0.5px solid var(--border);
+  margin-top: 2px;
+}
+.score-total-label { font-size: 10px; color: var(--text-3); }
+.score-total-val {
+  font-size: 13px; font-weight: 600;
+}
+
+.card-actions { display: flex; gap: 5px; }
+.act-btn {
+  padding: 3px 8px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1); color: var(--text-2);
+  font-size: 11px; font-family: inherit; cursor: pointer;
+  display: flex; align-items: center; gap: 3px;
+  transition: all 0.12s;
+}
+.act-btn:hover { border-color: var(--text-3); color: var(--text); }
+.act-btn.ok { border-color: var(--green); color: var(--green); }
+.act-btn i { font-size: 12px; }
+
+.export-row { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+.exp-btn {
+  padding: 6px 11px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface); color: var(--text-2);
+  font-size: 11px; font-family: inherit; cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  transition: all 0.12s;
+}
+.exp-btn:hover { color: var(--text); border-color: var(--text-3); }
+.exp-btn i { font-size: 13px; }
+
+.intake-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.intake-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+.intake-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.intake-title {
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text);
+}
+.intake-text {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.intake-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.intake-list li {
+  font-size: 11px;
+  color: var(--text-2);
+  background: var(--surface-1);
+  border: 0.5px solid var(--border);
+  border-radius: 7px;
+  padding: 6px 7px;
+}
+.intake-actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.intake-status {
+  font-size: 11px;
+  color: var(--green);
+  min-height: 16px;
+}
+@media (max-width: 520px) { .intake-list { grid-template-columns: 1fr; } }
+
+.err {
+  background: var(--bg-danger);
+  border: 0.5px solid var(--border-danger);
+  border-radius: var(--radius);
+  padding: 9px 13px; color: var(--text-danger);
+  font-size: 13px; display: flex; align-items: center; gap: 6px;
+}
+
+.spinner { display: inline-flex; gap: 4px; }
+.spinner span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #fff; animation: sp 1.1s infinite;
+}
+.spinner span:nth-child(2) { animation-delay: .18s; }
+.spinner span:nth-child(3) { animation-delay: .36s; }
+@keyframes sp { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+
+/* ── Modal ── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 100;
+  align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-bg.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 16px; padding: 1.15rem;
+  width: min(1240px, calc(100vw - 2rem));
+  max-height: min(86vh, 760px);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.modal-title {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  margin-bottom: .85rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.modal-pages {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, .95fr) minmax(300px, .85fr);
+  gap: 12px;
+  min-height: 0;
+  flex: 1;
+}
+.modal-pane {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.modal-pane::-webkit-scrollbar { width: 4px; }
+.modal-pane::-webkit-scrollbar-track { background: transparent; }
+.modal-pane::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+.modal-pane-title {
+  font-size: 12px; font-weight: 600; color: var(--text-2);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 5px;
+}
+.modal-close {
+  width: 26px; height: 26px; border: none;
+  background: var(--surface-1); border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-2); font-size: 14px; transition: background 0.12s;
+}
+.modal-close:hover { background: var(--border-strong); }
+
+.key-list { display: flex; flex-direction: column; gap: 5px; }
+
+.key-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1); cursor: pointer;
+  transition: border-color 0.12s;
+}
+.key-item:hover { border-color: var(--text-3); }
+.key-item.active-key { border-color: var(--red); }
+.key-item-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border-strong); flex-shrink: 0;
+}
+.key-item.active-key .key-item-dot { background: var(--red); }
+.key-item-info { flex: 1; min-width: 0; }
+.key-item-name { font-size: 13px; color: var(--text); font-weight: 500; }
+.key-item-val  { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.key-item-del {
+  width: 24px; height: 24px; border: none;
+  background: transparent; cursor: pointer;
+  border-radius: var(--radius); display: flex;
+  align-items: center; justify-content: center;
+  color: var(--text-3); font-size: 13px;
+  transition: all 0.12s; flex-shrink: 0;
+}
+.key-item-del:hover { background: var(--bg-danger); color: var(--text-danger); }
+.key-item-pool {
+  min-width: 52px; height: 24px; padding: 0 7px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--green);
+  font-size: 10px; font-family: inherit;
+  cursor: pointer; display: inline-flex;
+  align-items: center; justify-content: center; gap: 3px;
+  flex-shrink: 0;
+}
+.key-item-pool:hover { border-color: var(--green); }
+.key-item-pool.in-pool {
+  border-color: rgba(29,158,117,.35);
+  background: rgba(29,158,117,.08);
+  color: var(--green);
+  cursor: default;
+}
+.key-item-pool:disabled { opacity: 1; }
+.provider-pool-manager {
+  margin: 0 0 10px 0;
+  padding: 8px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+}
+.provider-pool-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin-bottom: 7px;
+}
+.provider-pool-list { display: flex; flex-direction: column; gap: 5px; }
+.provider-pool-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.key-item-pool.remove {
+  color: var(--text-danger);
+  border-color: var(--border-danger);
+  background: var(--bg-danger);
+}
+.key-item-pool.remove:hover { border-color: var(--danger); }
+.pool-mini-btn {
+  height: 24px; padding: 0 7px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 10px; font-family: inherit;
+  cursor: pointer; white-space: nowrap;
+}
+.pool-mini-btn:hover { border-color: var(--text-3); color: var(--text); }
+.api-status-card {
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+  padding: 9px;
+  margin-bottom: 10px;
+}
+.api-status-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 0;
+  border-top: 0.5px solid var(--border);
+  font-size: 11px;
+  color: var(--text-2);
+}
+.api-status-row:first-child { border-top: 0; padding-top: 0; }
+.api-status-row span:first-child { color: var(--text-3); flex-shrink: 0; }
+.api-status-row strong {
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.api-command-box {
+  width: 100%;
+  min-height: 300px;
+  box-sizing: border-box;
+  resize: vertical;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+  color: var(--text);
+  font: 11px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;
+  padding: 9px;
+}
+
+.add-key-form { border-top: 0.5px solid var(--border-strong); padding-top: 1rem; }
+.modal-pane .modal-pane-title + .add-key-form { border-top: 0; padding-top: 0; }
+.add-key-form .field-label { margin-bottom: 6px; font-size: 12px; }
+
+.key-input-row { display: flex; flex-direction: column; gap: 7px; }
+.key-input-row input {
+  width: 100%; height: 34px; padding: 0 10px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1); color: var(--text);
+  font-size: 13px; font-family: inherit;
+}
+.key-input-row input:focus { outline: none; border-color: var(--red); }
+
+.add-btn {
+  height: 34px; background: var(--red); color: #fff;
+  border: none; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 5px; transition: background 0.12s;
+}
+.add-btn:hover { background: var(--red-dark); }
+.add-btn i { font-size: 14px; }
+
+.no-keys { text-align: center; padding: 1rem; color: var(--text-3); font-size: 13px; }
+
+@media (max-width: 700px) {
+  .layout { flex-direction: column; height: auto; overflow: visible; }
+  .left { width: 100%; min-width: 0; border-right: none; border-bottom: 0.5px solid var(--border-strong); height: auto; overflow: visible; }
+  .left-scroll { overflow: visible; padding: 1rem; }
+  .right { min-height: 300px; }
+  .key-label { display: none; }
+  .modal-bg { align-items: stretch; padding: .6rem; }
+  .modal { width: 100%; max-height: calc(100vh - 1.2rem); padding: .9rem; }
+  .modal-pages { grid-template-columns: 1fr; gap: 12px; overflow-y: auto; }
+  .modal-pane { overflow: visible; padding-right: 0; }
+}
+/* ── Custom chip add row ── */
+.custom-add-row {
+  display: flex; gap: 5px; margin-top: 7px;
+}
+.custom-add-row input {
+  flex: 1; height: 28px; padding: 0 8px;
+  border: 0.5px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: transparent; color: var(--text);
+  font-size: 11px; font-family: inherit;
+  transition: border-color .12s;
+}
+.custom-add-row input:focus {
+  outline: none; border-style: solid; border-color: var(--red);
+}
+.custom-add-row button {
+  width: 28px; height: 28px; flex-shrink: 0;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1); color: var(--text-2);
+  cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 13px;
+  transition: all .12s;
+}
+.custom-add-row button:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+.chip-custom {
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.chip-del {
+  width: 13px; height: 13px; border-radius: 50%;
+  border: none; background: rgba(255,255,255,0.35);
+  cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 9px; color: inherit;
+  flex-shrink: 0; padding: 0; line-height: 1;
+  transition: background .1s;
+}
+.chip-del:hover { background: rgba(255,255,255,0.6); }
+.chip:not(.on) .chip-del { background: rgba(0,0,0,0.12); }
+.chip:not(.on) .chip-del:hover { background: rgba(0,0,0,0.25); }
+
+/* ── Translation block ── */
+.trans-block { margin: 2px 0; }
+.trans-btn {
+  padding: 3px 9px;
+  border: 0.5px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-3); font-size: 11px;
+  font-family: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px;
+  transition: all .12s;
+}
+.trans-btn:hover { border-color: var(--text-2); color: var(--text-2); border-style: solid; }
+.trans-btn i { font-size: 12px; }
+
+.trans-result {
+  display: flex; align-items: baseline; gap: 6px;
+  padding: 5px 8px;
+  background: var(--surface-1);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border);
+}
+.trans-label {
+  font-size: 10px; font-weight: 600;
+  color: var(--text-3); white-space: nowrap;
+  display: flex; align-items: center; gap: 3px; flex-shrink: 0;
+}
+.trans-text { font-size: 12px; color: var(--text-2); flex: 1; line-height: 1.5; }
+.trans-copy {
+  border: none; background: transparent;
+  color: var(--text-3); cursor: pointer; padding: 2px;
+  border-radius: 4px; flex-shrink: 0;
+  transition: color .12s;
+}
+.trans-copy:hover { color: var(--text); }
+
+.trans-loading {
+  font-size: 11px; color: var(--text-3);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.ti-loader-2 { animation: spin 1s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Target score panel ── */
+.target-row { display:flex; flex-direction:column; gap:3px; }
+.target-label {
+  display:flex; align-items:baseline; gap:5px;
+  font-size:11px; color:var(--text-2); font-weight:500;
+}
+.target-hint { font-size:10px; color:var(--text-3); font-weight:400; flex:1; }
+.target-val  { font-size:11px; font-weight:600; color:var(--text-2); white-space:nowrap; }
+
+/* ── Filter sliders ── */
+.filter-slider-group { display:flex;flex-direction:column;gap:5px; }
+.filter-slider-label { font-size:10px;color:var(--text-3);display:flex;justify-content:space-between; }
+.filter-slider-label span { color:var(--text-2);font-weight:600; }
+
+.dual-range-wrap {
+  position:relative;height:20px;
+}
+.dual-track,.dual-fill {
+  position:absolute;top:50%;transform:translateY(-50%);
+  left:0;right:0;height:3px;border-radius:2px;pointer-events:none;
+}
+.dual-track { background:var(--bg); }
+.dual-fill  { background:var(--red,#e03a3a); }
+.dual-range-wrap input[type=range] {
+  position:absolute;width:100%;top:50%;transform:translateY(-50%);
+  -webkit-appearance:none;appearance:none;
+  background:transparent;pointer-events:none;height:20px;margin:0;
+}
+.dual-range-wrap input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none;appearance:none;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--surface);border:2px solid var(--red,#e03a3a);
+  cursor:pointer;pointer-events:all;
+}
+.dual-range-wrap input[type=range]::-moz-range-thumb {
+  width:14px;height:14px;border-radius:50%;
+  background:var(--surface);border:2px solid var(--red,#e03a3a);
+  cursor:pointer;pointer-events:all;border:none;
+}
+
+/* Checkbox on cards */
+.card-check {
+  position:absolute;top:10px;right:10px;
+  width:16px;height:16px;cursor:pointer;accent-color:var(--red,#e03a3a);
+}
+.copy-card { position:relative; }
+.copy-card.filtered-out { opacity:.25;pointer-events:none; }
+.copy-card.selected { outline:2px solid var(--red,#e03a3a);outline-offset:1px; }
+
+
+/* -- __PRODUCT_NAME__ brand tokens override -- */
+:root {
+  --brand-orange: #FC4C02;
+  --brand-pink: #ED3370;
+  --cyan-tech: #77FFFD;
+  --top-purple: #8229B7;
+  --deep-blue: #1530A3;
+  --off-black: #141414;
+  --off-white: #ffffff;
+  --red: #FC4C02;
+  --red-dark: #d43f02;
+  --brand-gradient: linear-gradient(135deg, #ED3370 0%, #FC4C02 18%, #FC4C02 100%);
+  --bg: #faf8f6;
+  --surface: #ffffff;
+  --surface-1: #fff6f1;
+  --surface-2: #f4f1ef;
+  --border: rgba(20,20,20,0.08);
+  --border-strong: rgba(20,20,20,0.15);
+  --text: #141414;
+  --text-2: #5d5752;
+  --text-3: #918a84;
+  --green: #15996f;
+  --amber: #FC4C02;
+  --danger: #c92f4f;
+  --bg-danger: #fff1f4;
+  --text-danger: #7b1832;
+  --border-danger: #f09aae;
+  --left-w: 372px;
+}
+/* -- __PRODUCT_NAME__ formal brand layer -- */
+body { background:
+  radial-gradient(circle at 10% 0%, rgba(237,51,112,0.10), transparent 26rem),
+  linear-gradient(180deg, #fff 0%, var(--bg) 46%, #fff 100%);
+}
+.topbar {
+  height: 60px;
+  padding: 0 1.35rem;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 1px 0 rgba(20,20,20,0.08), 0 14px 34px rgba(20,20,20,0.05);
+}
+.rn-logo {
+  width: 42px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--brand-gradient);
+  transform: rotate(-5deg);
+  box-shadow: 0 10px 24px rgba(252,76,2,0.22);
+}
+.rn-logo span {
+  font-size: 10px;
+  line-height: .92;
+  font-weight: 800;
+  transform: rotate(5deg);
+  letter-spacing: 0;
+}
+.app-name { font-size: 15px; font-weight: 750; letter-spacing: 0; }
+.app-badge {
+  color: var(--off-black);
+  background: rgba(119,255,253,0.28);
+  border-color: rgba(21,48,163,0.14);
+  font-weight: 650;
+}
+.key-mgr-btn, .exp-btn, .act-btn { border-radius: 8px; }
+.layout { height: calc(100vh - 60px); }
+.left { background: rgba(255,255,255,0.94); }
+.left-scroll { gap: 10px; padding: 1rem; }
+.brand-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--brand-gradient);
+  color: #fff;
+  min-height: 138px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 18px 40px rgba(252,76,2,0.18);
+}
+.brand-card::after {
+  content: "";
+  position: absolute;
+  right: -34px;
+  top: -46px;
+  width: 142px;
+  height: 142px;
+  border: 18px solid rgba(255,255,255,0.18);
+  border-radius: 42px;
+  transform: rotate(-5deg);
+}
+.brand-kicker { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; opacity: .84; font-weight: 800; }
+.brand-title { font-size: 27px; line-height: 1; font-weight: 850; letter-spacing: 0; max-width: 220px; }
+.brand-sub { font-size: 12px; line-height: 1.42; max-width: 290px; opacity: .92; }
+.brand-pills { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+.brand-pills span { font-size:10px; font-weight:750; color:#141414; background:rgba(255,255,255,.86); border-radius:999px; padding:4px 7px; }
+.sec {
+  background: rgba(255,255,255,0.86);
+  border-color: rgba(20,20,20,0.10);
+  box-shadow: 0 8px 24px rgba(20,20,20,0.035);
+}
+.sec-title { color: #6f6760; letter-spacing: .06em; }
+.chip { border-radius: 999px; background: #fff; }
+.chip.on {
+  background: var(--brand-gradient);
+  border-color: transparent;
+  box-shadow: 0 8px 18px rgba(252,76,2,0.18);
+}
+.gen-wrap { padding: .85rem 1rem; box-shadow: 0 -12px 30px rgba(20,20,20,0.04); }
+.gen-btn {
+  height: 44px;
+  background: var(--brand-gradient);
+  box-shadow: 0 12px 28px rgba(252,76,2,0.24);
+}
+.gen-btn:hover { filter: brightness(.98); background: var(--brand-gradient); }
+.right { padding: 1.4rem 1.55rem; }
+.right-empty {
+  border: 1px dashed rgba(252,76,2,0.24);
+  border-radius: 8px;
+  min-height: 420px;
+  background: rgba(255,255,255,0.68);
+}
+.right-empty i { color: var(--brand-orange); opacity: .95; }
+.copy-card {
+  border-radius: 8px;
+  border: 1px solid rgba(20,20,20,0.10);
+  box-shadow: 0 10px 28px rgba(20,20,20,0.045);
+}
+.copy-card.selected { outline-color: var(--brand-orange); }
+.t-short { background: rgba(119,255,253,0.28); color: #1530A3; }
+.t-long { background: rgba(130,41,183,0.12); color: #8229B7; }
+.score-bar.sc-green { background: #15996f; }
+.score-bar.sc-amber { background: var(--brand-orange); }
+.score-bar.sc-red { background: var(--brand-pink); }
+@media (max-width: 860px) {
+  :root { --left-w: 100%; }
+  .layout { flex-direction: column; height: auto; overflow: visible; }
+  .left { width: 100%; min-width: 0; border-right: 0; border-bottom: .5px solid var(--border-strong); }
+  .left-scroll { max-height: none; }
+  .right { min-height: 56vh; }
+}
+</style>
+</head>
+<body>
+
+<!-- Modal -->
+<div id="modal-bg" class="modal-bg" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">
+      API Key 管理
+      <button class="modal-close" onclick="closeModalDirect()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-pages">
+      <div class="modal-pane">
+        <div class="modal-pane-title"><i class="ti ti-list-check"></i> &#24050;&#20445;&#23384; Key</div>
+    <div class="add-key-form" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div class="field-label" style="margin-bottom:0">云账号 <span style="font-weight:400;color:var(--text-3)">用于 API 复用模型记录</span></div>
+        <span id="cloud-account-status" style="font-size:11px;color:var(--text-3)">未登录</span>
+      </div>
+      <div class="key-input-row">
+        <input id="cloud-username" type="text" placeholder="用户名" autocomplete="username">
+        <input id="cloud-password" type="password" placeholder="密码（至少8位）" autocomplete="current-password">
+        <div style="display:flex;gap:6px">
+          <button class="add-btn" onclick="cloudLogin()" style="flex:1"><i class="ti ti-login"></i> 登录</button>
+          <button class="add-btn" onclick="cloudRegister()" style="flex:1;background:var(--surface-1);color:var(--text-2);border:0.5px solid var(--border-strong)"><i class="ti ti-user-plus"></i> 注册</button>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="add-btn" onclick="syncLocalKeysToCloud()" style="flex:1;background:var(--surface-1);color:var(--text-2);border:0.5px solid var(--border-strong)"><i class="ti ti-cloud-upload"></i> 同步本地 Key</button>
+          <button class="add-btn" onclick="createCloudApiToken()" style="flex:1;background:var(--surface-1);color:var(--text-2);border:0.5px solid var(--border-strong)"><i class="ti ti-code"></i> 生成 API Token</button>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="add-btn" onclick="refreshCloudProfilesFromButton()" style="flex:1;background:var(--surface-1);color:var(--text-2);border:0.5px solid var(--border-strong)"><i class="ti ti-refresh"></i> 刷新共享模型</button>
+          <button class="add-btn" onclick="cloudLogout()" style="flex:1;background:var(--surface-1);color:var(--text-2);border:0.5px solid var(--border-strong)"><i class="ti ti-logout"></i> 退出登录</button>
+        </div>
+        </div>
+      </div>
+    <div id="provider-pool-manager" class="provider-pool-manager">
+      <div class="provider-pool-head">
+        <div class="field-label" style="margin-bottom:0">&#24182;&#21457;&#27169;&#22411;&#27744;</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span id="provider-pool-summary" style="font-size:11px;color:var(--text-3)"></span>
+          <button class="pool-mini-btn" onclick="clearProviderPool(event)"><i class="ti ti-trash"></i> &#28165;&#31354;</button>
+        </div>
+      </div>
+      <div id="provider-pool-active-list" class="provider-pool-list"></div>
+    </div>
+    <div class="key-list" id="key-list"></div>
+      </div>
+      <div class="modal-pane">
+        <div class="modal-pane-title"><i class="ti ti-key"></i> &#28155;&#21152; / &#35782;&#21035;&#26032; Key</div>
+    <div id="key-editor-form" class="add-key-form">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div class="field-label" id="form-label" style="margin-bottom:0">添加新 Key</div>
+        <button id="cancel-edit-btn" onclick="cancelEdit()" style="display:none;padding:2px 8px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1);color:var(--text-2);font-size:11px;font-family:inherit;cursor:pointer">取消编辑</button>
+      </div>
+      <input type="hidden" id="inp-edit-id" value="">
+      <div style="margin-bottom:8px;padding:8px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <div class="field-label" style="margin-bottom:0">&#20013;&#36716;&#31449;&#37197;&#32622;&#23548;&#20837;</div>
+          <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+            <button onclick="importRelayConfig(false)" style="height:28px;padding:0 9px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text-2);font-size:11px;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:4px"><i class="ti ti-scan"></i> &#35782;&#21035;&#22635;&#20889;</button>
+            <button onclick="importRelayConfig(true)" style="height:28px;padding:0 9px;border:0.5px solid var(--red);border-radius:var(--radius);background:var(--red);color:white;font-size:11px;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:4px"><i class="ti ti-radar"></i> &#35782;&#21035;&#24182;&#21957;&#25506;</button>
+          </div>
+        </div>
+        <textarea id="relay-config-raw" rows="3" placeholder='{&quot;_type&quot;:&quot;newapi_channel_conn&quot;,&quot;key&quot;:&quot;sk-...&quot;,&quot;url&quot;:&quot;https://relay.example.com&quot;}' style="width:100%;box-sizing:border-box;resize:vertical;min-height:62px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:12px;line-height:1.45;padding:7px 8px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace"></textarea>
+        <div style="font-size:11px;color:var(--text-3);margin-top:5px">&#31896;&#36148; NewAPI / &#20013;&#36716;&#31449;&#29983;&#25104;&#30340;&#36830;&#25509;&#20449;&#24687;&#65292;&#20250;&#33258;&#21160;&#22635;&#20889; URL&#12289;Key&#12289;&#27169;&#24335;&#21644;&#27169;&#22411;&#12290;</div>
+      </div>
+      <div class="key-input-row">
+        <input id="inp-name" type="text" placeholder="名称，例如：中转 GPT-4o" maxlength="30">
+        <input id="inp-url" type="text" placeholder="API URL，例如：https://relay.example.com/v1" autocomplete="off">
+        <input id="inp-key" type="password" placeholder="API Key" autocomplete="off">
+        <div style="display:flex;gap:6px;align-items:center">
+          <select id="inp-mode" onchange="onModeChange()" style="flex:1;height:34px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1);color:var(--text);font-size:13px;padding:0 8px;font-family:inherit;cursor:pointer">
+            <option value="openai">OpenAI 兼容（GPT / 大多数中转）</option>
+            <option value="anthropic">Anthropic 原生（官方 Claude API）</option>
+          </select>
+        </div>
+        <div id="disguise-row" style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;color:var(--text-3);white-space:nowrap;flex-shrink:0">伪装为</span>
+          <select id="inp-disguise" style="flex:1;height:34px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1);color:var(--text);font-size:13px;padding:0 8px;font-family:inherit;cursor:pointer">
+            <option value="none">不伪装（使用中转默认头）</option>
+            <option value="openai">伪装成 OpenAI（官方头）</option>
+            <option value="claude">伪装成 Claude（Anthropic 头）</option>
+            <option value="claudecode">伪装成 Claude Code（官方环境头）</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:6px">
+          <select id="inp-model" style="flex:1;height:34px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1);color:var(--text);font-size:13px;padding:0 8px;font-family:inherit;cursor:pointer">
+            <option value="">— 先点右边嗅探可用模型 —</option>
+          </select>
+          <button id="sniff-btn" onclick="sniffModels()" style="height:34px;padding:0 12px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1);color:var(--text-2);font-size:12px;font-family:inherit;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px;transition:all .12s">
+            <i class="ti ti-radar" style="font-size:14px"></i> 嗅探模型
+          </button>
+        </div>
+        <label style="display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text-2);line-height:1.35">
+          <input id="auto-add-provider-pool" type="checkbox" checked style="accent-color:var(--red);flex-shrink:0">
+          <span>&#24050;&#30331;&#24405;&#20113;&#36134;&#21495;&#26102;&#65292;&#20445;&#23384;&#21518;&#33258;&#21160;&#21152;&#20837;&#24182;&#21457;&#27169;&#22411;&#27744;</span>
+        </label>
+        <button id="save-key-btn" class="add-btn" onclick="addKey()"><i class="ti ti-plus"></i> &#20445;&#23384;&#24182;&#20351;&#29992;</button>
+      </div>
+    </div>
+      </div>
+      <div class="modal-pane">
+        <div class="modal-pane-title"><i class="ti ti-terminal-2"></i> API 调用</div>
+        <div class="api-status-card">
+          <div class="api-status-row"><span>登录状态</span><strong id="api-status-login">未登录</strong></div>
+          <div class="api-status-row"><span>共享云模型</span><strong id="api-status-cloud">0 个</strong></div>
+          <div class="api-status-row"><span>__PRODUCT_NAME__ 模型池</span><strong id="api-status-pool">未设置</strong></div>
+          <div class="api-status-row"><span>外部 API Token</span><strong id="api-status-token">未生成</strong></div>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+          <button class="add-btn" onclick="createCloudApiToken()" style="flex:1;min-width:128px"><i class="ti ti-key"></i> 生成/更新 Token</button>
+          <button class="add-btn" onclick="copyApiCommand()" style="flex:1;min-width:128px;background:var(--surface-1);color:var(--text-2);border:0.5px solid var(--border-strong)"><i class="ti ti-copy"></i> 复制命令</button>
+        </div>
+        <textarea id="api-command-box" class="api-command-box" readonly></textarea>
+        <div style="font-size:11px;color:var(--text-3);line-height:1.45;margin-top:7px">
+          这条命令默认使用当前云账号下保存的 __PRODUCT_NAME__ 模型池。其他 AI 调用时只需要替换 Authorization 里的 Token，不需要知道底层模型 Key。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="rn-logo"><span>__BRAND_MARK__</span></div>
+  <span class="app-name">__PRODUCT_NAME__ Ad Copy Generator</span>
+  <span class="app-badge">Google Ads</span>
+  <div class="key-bar">
+    <div class="key-dot" id="key-dot"></div>
+    <span class="key-label" id="key-label">未设置 API Key</span>
+    <button class="key-mgr-btn" onclick="openModal()"><i class="ti ti-key"></i> 管理 Key</button>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="layout">
+
+  <!-- Left: config -->
+  <div class="left">
+    <div class="left-scroll">
+      <div class="brand-card">
+        <div>
+          <div class="brand-kicker">__PRODUCT_NAME__ official copy desk</div>
+          <div class="brand-title">Control diario sin complicarte</div>
+        </div>
+        <div>
+          <div class="brand-sub">Genera Google App Campaign copy con tono claro, tranquilo y protector, usando solo beneficios respaldados por la matriz del cliente.</div>
+          <div class="brand-pills"><span>MX only</span><span>Español México</span><span>Android default</span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="intake-card">
+          <div class="intake-head">
+            <div>
+              <div class="intake-kicker">Tool factory intake</div>
+              <div class="intake-title">新产品工具接入 / 品牌校准</div>
+            </div>
+            <i class="ti ti-clipboard-list" style="color:var(--red);font-size:18px"></i>
+          </div>
+          <div class="intake-text">
+            基于当前 __PRODUCT_NAME__ 金融支付工具开新分支时，先把产品资料、品牌书、产品文档和链接交给 AI，再让它调整默认选项、文案规则、UI 配色和视觉语气。
+          </div>
+          <ul class="intake-list">
+            <li>产品名 / 类型 / 链接</li>
+            <li>投放国家 / 语言 / 版位</li>
+            <li>目标人群 / 使用场景</li>
+            <li>支付功能 / 卖点 / 禁用表述</li>
+            <li>品牌书 / 产品文档 / 合规限制</li>
+            <li>UI 配色 / 参考素材 / 竞品参考</li>
+          </ul>
+          <div class="intake-actions">
+            <button class="exp-btn" onclick="copyProductIntakePrompt('__PRODUCT_SLUG__')"><i class="ti ti-copy"></i> 复制接入需求表</button>
+            <button class="exp-btn" onclick="copyUiCalibrationPrompt('__PRODUCT_SLUG__')"><i class="ti ti-palette"></i> 复制 UI 校准指令</button>
+            <span class="intake-status" id="product-intake-status"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title"><i class="ti ti-world"></i> Market & Device</div>
+        <div class="field-label">Target market</div>
+        <div class="chips" id="c-region">
+          <div class="chip on" data-v="MX">Mexico</div>
+        </div>
+        <div class="sub-row">
+          <div class="field-label">Language</div>
+          <div class="chips" id="c-lang">
+            <div class="chip on" data-v="es-MX">Español México</div>
+          </div>
+        </div>
+        <div class="sub-row">
+          <div class="field-label">Device</div>
+          <div class="chips" id="c-device">
+            <div class="chip on" data-v="android">Android</div>
+            <div class="chip" data-v="ios">iOS</div>
+            <div class="chip" data-v="both">Both</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title"><i class="ti ti-layout-grid"></i> Money job <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0">(multi)</span></div>
+        <div class="chips" id="c-cat">
+          <div class="chip on" data-v="Not running out too soon">Not running out</div>
+          <div class="chip" data-v="Paying without stress">Pay without stress</div>
+          <div class="chip" data-v="Having money when needed">Money when needed</div>
+          <div class="chip" data-v="Managing without overthinking">No overthinking</div>
+          <div class="chip" data-v="Avoiding dangerous debt">Avoid debt stress</div>
+          <div class="chip" data-v="Feeling in control">Feel in control</div>
+        </div>
+        <div class="custom-add-row" id="custom-cat-row">
+          <input id="custom-cat-inp" type="text" placeholder="自定义 money job，如：pagar colegiatura" maxlength="30"
+            onkeydown="if(event.key==='Enter')addCustomCat()">
+          <button onclick="addCustomCat()"><i class="ti ti-plus"></i></button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title"><i class="ti ti-bulb"></i> __PRODUCT_NAME__ benefits <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0">(multi)</span></div>
+        <div class="chips" id="c-benefit">
+          <div class="chip on" data-v="Pay water, electricity and gas bills from the app">Utilities: water, electricity, gas</div>
+          <div class="chip" data-v="Top up Telcel, AT&T, Movistar and other phone carriers from the app">Phone airtime top-ups</div>
+          <div class="chip" data-v="Pay from your phone without leaving home or standing in line">Pay from home</div>
+          <div class="chip" data-v="Tap your phone to make contactless payments in stores">Contactless payment</div>
+          <div class="chip" data-v="Send and receive transfers to any account from your phone">Transfers to any account</div>
+          <div class="chip" data-v="Pay internet, phone and TV providers such as Telmex, izzi, Totalplay, Megacable, Sky and Dish">Internet, phone and TV</div>
+          <div class="chip" data-v="Pay tuition and school services from more than 121 educational institutions">Tuition and schools</div>
+          <div class="chip" data-v="Pay taxes and government fees such as property tax, vehicle tax and state services">Taxes and government fees</div>
+          <div class="chip" data-v="Pay catalog sales providers such as Jafra, Natura, Betterware, Fuller and Tupperware">Catalog sales payments</div>
+          <div class="chip" data-v="Pay insurance, tolls and transport services such as Qualitas, Atlas and PASE">Insurance, tolls, transport</div>
+          <div class="chip" data-v="Access more than 377 bill-pay services across 42 categories in one app">377+ services, 42 categories</div>
+          <div class="chip" data-v="Add cash to your balance at more than 28,531 cash-in points including 7-Eleven, Soriana and Farmacias del Ahorro">Cash in: 28,531+ points</div>
+          <div class="chip" data-v="Withdraw cash at more than 6,984 cash-out points including Soriana, Kiosko, Willys and SYStienda">Cash out: 6,984+ points</div>
+          <div class="chip" data-v="Check your balance before spending and see your available money">Check balance anytime</div>
+          <div class="chip" data-v="See a clear transaction history of what you pay and receive">Clear transaction history</div>
+          <div class="chip" data-v="Schedule recurring payments so you do not forget regular bills">Schedule recurring payments</div>
+          <div class="chip" data-v="Get cashback on purchases and a $100 welcome cashback reward where the campaign applies">Cashback and $100 welcome</div>
+          <div class="chip" data-v="Get 24/7 backup and support from the __PRODUCT_NAME__ team">24/7 support</div>
+          <div class="chip" data-v="Use a financial app backed by the known Clip brand">Backed by Clip</div>
+        </div>
+        <div class="custom-add-row" id="custom-bnf-row">
+          <input id="custom-bnf-inp" type="text" placeholder="自定义功能点，必须来自客户资料" maxlength="40"
+            onkeydown="if(event.key==='Enter')addCustomBnf()">
+          <button onclick="addCustomBnf()"><i class="ti ti-plus"></i></button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title"><i class="ti ti-sliders"></i> Output settings</div>
+        <div class="col2">
+          <div>
+            <div class="field-label">Copy type</div>
+            <div class="chips" id="c-type">
+              <div class="chip on" data-v="both">Both</div>
+              <div class="chip" data-v="short">Short</div>
+              <div class="chip" data-v="long">Long</div>
+            </div>
+          </div>
+          <div>
+            <div class="field-label">Qty per type</div>
+            <div class="qty-wrap">
+              <input type="number" id="qty" value="5" min="1" max="50" step="1">
+              <span>copies</span>
+            </div>
+          </div>
+        </div>
+        <div class="sub-row">
+          <div class="field-label">Tone</div>
+          <div class="chips" id="c-tone">
+            <div class="chip on" data-v="clear, calm, and protective">Clear</div>
+            <div class="chip" data-v="empathetic and reassuring">Reassuring</div>
+            <div class="chip" data-v="direct and practical">Practical</div>
+            <div class="chip" data-v="warm and simple">Warm</div>
+            <div class="chip" data-v="optimistic but realistic">Realistic</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title"><i class="ti ti-target"></i> Quality targets <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0">生成时的最低目标得分</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px" id="target-sliders">
+
+          <div class="target-row">
+            <div class="target-label">
+              <span>Hook</span>
+              <span class="target-hint">开头吸引力</span>
+              <span class="target-val" id="tv-hook">≥ 6</span>
+            </div>
+            <input type="range" id="tg-hook" min="0" max="10" value="6" step="1"
+              oninput="document.getElementById('tv-hook').textContent='≥ '+this.value"
+              style="width:100%;accent-color:var(--red)">
+          </div>
+
+          <div class="target-row">
+            <div class="target-label">
+              <span>Relevance</span>
+              <span class="target-hint">关键词相关性</span>
+              <span class="target-val" id="tv-rel">≥ 6</span>
+            </div>
+            <input type="range" id="tg-rel" min="0" max="10" value="6" step="1"
+              oninput="document.getElementById('tv-rel').textContent='≥ '+this.value"
+              style="width:100%;accent-color:var(--red)">
+          </div>
+
+          <div class="target-row">
+            <div class="target-label">
+              <span>CTA</span>
+              <span class="target-hint">行动号召强度</span>
+              <span class="target-val" id="tv-cta">≥ 7</span>
+            </div>
+            <input type="range" id="tg-cta" min="0" max="10" value="7" step="1"
+              oninput="document.getElementById('tv-cta').textContent='≥ '+this.value"
+              style="width:100%;accent-color:var(--red)">
+          </div>
+
+          <div class="target-row">
+            <div class="target-label">
+              <span>Space use</span>
+              <span class="target-hint">字节利用率</span>
+              <span class="target-val" id="tv-space">≥ 5</span>
+            </div>
+            <input type="range" id="tg-space" min="0" max="10" value="5" step="1"
+              oninput="document.getElementById('tv-space').textContent='≥ '+this.value"
+              style="width:100%;accent-color:var(--red)">
+          </div>
+
+          <div class="target-row" style="border-top:0.5px solid var(--border);padding-top:6px;margin-top:2px">
+            <div class="target-label">
+              <span style="font-weight:600;color:var(--text)">Overall</span>
+              <span class="target-hint">综合最低得分</span>
+              <span class="target-val" id="tv-total" style="color:var(--red)">≥ 7</span>
+            </div>
+            <input type="range" id="tg-total" min="0" max="10" value="7" step="1"
+              oninput="document.getElementById('tv-total').textContent='≥ '+this.value"
+              style="width:100%;accent-color:var(--red)">
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /left-scroll -->
+
+    <div class="gen-wrap">
+      <button class="gen-btn" id="gen-btn" onclick="generate()">
+        <i class="ti ti-sparkles"></i> Generate __PRODUCT_NAME__ copy
+      </button>
+    </div>
+  </div><!-- /left -->
+
+  <!-- Right: results -->
+  <div class="right" id="right-panel">
+    <div class="right-empty" id="right-empty">
+      <i class="ti ti-writing"></i>
+      <p>Select a Mexico feature, then generate compliant Spanish Google App Campaign copy for Android.</p>
+    </div>
+
+    <!-- Filter bar (hidden until results exist) -->
+    <div id="filter-bar" style="display:none;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em">筛选</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span id="filter-count" style="font-size:11px;color:var(--text-3)"></span>
+          <button onclick="selectAllFiltered()" style="padding:3px 8px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1);color:var(--text-2);font-size:11px;font-family:inherit;cursor:pointer">全选筛选结果</button>
+          <button onclick="clearSelection()" style="padding:3px 8px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1);color:var(--text-2);font-size:11px;font-family:inherit;cursor:pointer">清除选择</button>
+          <button onclick="resetFilters()" style="padding:3px 8px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface-1);color:var(--text-2);font-size:11px;font-family:inherit;cursor:pointer"><i class="ti ti-x" style="font-size:11px"></i> 重置筛选</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+        <div class="filter-slider-group">
+          <div class="filter-slider-label">Hook <span id="fv-hook">0–10</span></div>
+          <div class="dual-range-wrap" id="dr-hook" data-key="hook"><div class="dual-track"></div><div class="dual-fill"></div><input type="range" class="dr-min" min="0" max="10" value="0" step="1"><input type="range" class="dr-max" min="0" max="10" value="10" step="1"></div>
+        </div>
+        <div class="filter-slider-group">
+          <div class="filter-slider-label">Relevance <span id="fv-rel">0–10</span></div>
+          <div class="dual-range-wrap" id="dr-rel" data-key="rel"><div class="dual-track"></div><div class="dual-fill"></div><input type="range" class="dr-min" min="0" max="10" value="0" step="1"><input type="range" class="dr-max" min="0" max="10" value="10" step="1"></div>
+        </div>
+        <div class="filter-slider-group">
+          <div class="filter-slider-label">CTA <span id="fv-cta">0–10</span></div>
+          <div class="dual-range-wrap" id="dr-cta" data-key="cta"><div class="dual-track"></div><div class="dual-fill"></div><input type="range" class="dr-min" min="0" max="10" value="0" step="1"><input type="range" class="dr-max" min="0" max="10" value="10" step="1"></div>
+        </div>
+        <div class="filter-slider-group">
+          <div class="filter-slider-label">Space use <span id="fv-space">0–10</span></div>
+          <div class="dual-range-wrap" id="dr-space" data-key="space"><div class="dual-track"></div><div class="dual-fill"></div><input type="range" class="dr-min" min="0" max="10" value="0" step="1"><input type="range" class="dr-max" min="0" max="10" value="10" step="1"></div>
+        </div>
+        <div class="filter-slider-group">
+          <div class="filter-slider-label" style="font-weight:600;color:var(--text)">Total <span id="fv-total">0–10</span></div>
+          <div class="dual-range-wrap" id="dr-total" data-key="total"><div class="dual-track"></div><div class="dual-fill"></div><input type="range" class="dr-min" min="0" max="10" value="0" step="1"><input type="range" class="dr-max" min="0" max="10" value="10" step="1"></div>
+        </div>
+      </div>
+      <!-- Batch actions (shown when items selected) -->
+      <div id="batch-actions" style="display:none;margin-top:10px;padding:8px 10px;background:var(--surface);border:0.5px solid var(--border-accent,var(--border-strong));border-radius:var(--radius);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span id="sel-count" style="font-size:12px;color:var(--text-2)"></span>
+        <div style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap">
+          <button onclick="batchExport('short')" class="exp-btn"><i class="ti ti-table-export"></i> 导出短文案</button>
+          <button onclick="batchExport('long')"  class="exp-btn"><i class="ti ti-table-export"></i> 导出长文案</button>
+          <button onclick="batchExport('both')"  class="exp-btn"><i class="ti ti-table-export"></i> 导出全部选中</button>
+          <button onclick="batchRegen()" class="exp-btn" style="color:var(--red,#e03a3a);border-color:var(--red,#e03a3a)"><i class="ti ti-refresh"></i> 批量重新生成</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="results" style="display:none"></div>
+  </div>
+
+</div><!-- /layout -->
+
+<script>
+// ── API Key Manager ──────────────────────────────────────────────
+function loadKeys() {
+  try { return JSON.parse(localStorage.getItem('mc_keys') || '[]'); } catch(e) { return []; }
+}
+function saveKeys(keys) { localStorage.setItem('mc_keys', JSON.stringify(keys)); }
+
+function getCloudToken() { return localStorage.getItem('mc_cloud_token') || ''; }
+function setCloudToken(token) { localStorage.setItem('mc_cloud_token', token); }
+function clearCloudToken() { localStorage.removeItem('mc_cloud_token'); localStorage.removeItem('mc_cloud_user'); }
+function getExternalApiToken() { return localStorage.getItem('mc_external_api_token') || ''; }
+function setExternalApiToken(token) { if (token) localStorage.setItem('mc_external_api_token', token); }
+
+async function cloudRequest(path, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  const token = getCloudToken();
+  if (token) headers.Authorization = 'Bearer ' + token;
+  const r = await fetch(path, { ...options, headers });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok || data.error) throw new Error(data.error || 'Cloud request failed: ' + r.status);
+  return data;
+}
+
+function renderCloudStatus(user) {
+  const status = document.getElementById('cloud-account-status');
+  const savedUser = user || (() => { try { return JSON.parse(localStorage.getItem('mc_cloud_user') || 'null'); } catch(e) { return null; } })();
+  if (status) status.textContent = savedUser ? ('已登录：' + savedUser.username) : '未登录';
+  renderApiStatus(savedUser);
+}
+
+function tokenPreview(token) {
+  const t = String(token || '');
+  if (!t) return '';
+  return t.slice(0, 10) + '...' + t.slice(-6);
+}
+
+function buildExternalApiCommand(token = getExternalApiToken()) {
+  const origin = window.location.origin;
+  const tokenText = token || 'PASTE_RN_PAT_TOKEN_HERE';
+  const poolNote = CLOUD_PROVIDER_POOL_PROFILES.length
+    ? 'Uses saved __PRODUCT_NAME__ provider pool: ' + CLOUD_PROVIDER_POOL_PROFILES.map(p => p.name).join(', ')
+    : 'Uses saved __PRODUCT_NAME__ provider pool when configured; otherwise active/single shared profile fallback.';
+  return `# ${poolNote}
+# For AI callers:
+# - Set qty dynamically from the user's requested output volume, 1-50 per type/category.
+# - Send a stable agent_id so different agents can use different saved models in agent_sticky mode.
+# - For throughput, keep targets around 6 and quality_goal around 7 or omit quality_goal.
+# - Only raise score_control.targets / quality_goal when the user asks for higher-scoring output.
+# - If the user lowers targets to 6, do not keep quality_goal at 9.
+curl -X POST "${origin}/api/ad-copy" \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer ${tokenText}" \\
+  -d '{
+    "agent_id": "external-ai-agent-1",
+    "provider_pool_mode": "agent_sticky",
+    "categories": ["Paying utilities from home"],
+    "benefits": ["water/electricity/gas bill pay", "phone airtime top-ups", "balance checks", "transaction history"],
+    "regions": ["MX"],
+    "language": "es-MX",
+    "device": "android",
+    "type": "both",
+    "qty": 12,
+    "score_control": {
+      "enabled": true,
+      "targets": { "hook": 6, "rel": 6, "cta": 6, "space": 6, "total": 6 },
+      "quality_goal": { "total": 7 },
+      "max_attempts": 2,
+      "candidate_multiplier": 2
+    }
+  }'`;
+}
+
+function renderApiStatus(savedUser) {
+  const user = savedUser || (() => { try { return JSON.parse(localStorage.getItem('mc_cloud_user') || 'null'); } catch(e) { return null; } })();
+  const loginEl = document.getElementById('api-status-login');
+  const cloudEl = document.getElementById('api-status-cloud');
+  const poolEl = document.getElementById('api-status-pool');
+  const tokenEl = document.getElementById('api-status-token');
+  const cmdEl = document.getElementById('api-command-box');
+  if (loginEl) loginEl.textContent = getCloudToken() && user ? user.username : '未登录';
+  if (cloudEl) cloudEl.textContent = CLOUD_PROFILE_CACHE.length + ' 个' + (CLOUD_PROFILE_CACHE.length ? '共享模型' : '');
+  if (poolEl) {
+    poolEl.textContent = CLOUD_PROVIDER_POOL_PROFILES.length
+      ? CLOUD_PROVIDER_POOL_PROFILES.map(p => p.name || p.model || p.id).join(' / ')
+      : (getCloudToken() ? '未设置，API 会尝试 active/单模型兜底' : '未登录');
+  }
+  if (tokenEl) {
+    const token = getExternalApiToken();
+    tokenEl.textContent = token ? tokenPreview(token) : '未生成';
+  }
+  if (cmdEl) cmdEl.value = buildExternalApiCommand();
+}
+
+function resetCloudSessionView() {
+  CLOUD_PROFILE_CACHE = [];
+  CLOUD_PROVIDER_POOL_IDS = new Set();
+  CLOUD_PROVIDER_POOL_PROFILES = [];
+  renderCloudStatus(null);
+  renderProviderPoolManager();
+  renderKeyList();
+  renderKeyBar();
+  renderApiStatus();
+  const passwordEl = document.getElementById('cloud-password');
+  if (passwordEl) passwordEl.value = '';
+}
+
+function cloudLogout() {
+  if (!getCloudToken()) {
+    resetCloudSessionView();
+    return;
+  }
+  if (!confirm('退出当前云账号？本操作只清除本浏览器登录状态，不会删除云端账号、API Token 或模型记录。')) return;
+  clearCloudToken();
+  resetCloudSessionView();
+}
+
+function escHtml(value) {
+  return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+let CLOUD_PROFILE_CACHE = [];
+let CLOUD_PROVIDER_POOL_IDS = new Set();
+let CLOUD_PROVIDER_POOL_PROFILES = [];
+
+function localKeyPreview(k) {
+  const val = String(k && k.val || '');
+  if (!val) return '';
+  return val.slice(0, 6) + '\u2022\u2022\u2022\u2022' + val.slice(-4);
+}
+
+function profileMatchesLocalKey(profile, key) {
+  if (!profile || !key) return false;
+  if (key.cloud_profile_id && profile.id === key.cloud_profile_id) return true;
+  if (profile.id === key.id) return true;
+  return String(profile.name || '') === String(key.name || '')
+    && String(profile.model || '') === String(key.model || '')
+    && String(profile.key_preview || '') === localKeyPreview(key);
+}
+
+function findCloudProfileForLocalKey(key) {
+  if (!key) return null;
+  return CLOUD_PROFILE_CACHE.find(profile => profileMatchesLocalKey(profile, key))
+    || CLOUD_PROVIDER_POOL_PROFILES.find(profile => profileMatchesLocalKey(profile, key))
+    || null;
+}
+
+function getProviderPoolIdForLocalKey(key) {
+  const profile = findCloudProfileForLocalKey(key);
+  return (profile && profile.id) || key.cloud_profile_id || key.id;
+}
+
+function isLocalKeyInProviderPool(key) {
+  if (!key) return false;
+  if (CLOUD_PROVIDER_POOL_IDS.has(key.cloud_profile_id) || CLOUD_PROVIDER_POOL_IDS.has(key.id)) return true;
+  const profile = findCloudProfileForLocalKey(key);
+  return !!(profile && CLOUD_PROVIDER_POOL_IDS.has(profile.id));
+}
+
+function isCloudProfileInProviderPool(profile) {
+  return !!(profile && CLOUD_PROVIDER_POOL_IDS.has(profile.id));
+}
+
+function getCloudOnlyProfiles(keys = loadKeys()) {
+  return CLOUD_PROFILE_CACHE.filter(profile => !keys.some(key => profileMatchesLocalKey(profile, key)));
+}
+
+function renderProviderPoolSummary() {
+  const el = document.getElementById('provider-pool-summary');
+  if (!el) return;
+  if (!getCloudToken()) {
+    el.textContent = '\u672a\u767b\u5f55';
+    renderApiStatus();
+    return;
+  }
+  const cloudCount = CLOUD_PROFILE_CACHE.length;
+  el.textContent = CLOUD_PROVIDER_POOL_IDS.size + ' \u4e2a\u5df2\u6fc0\u6d3b' + (cloudCount ? ' · 云端 ' + cloudCount + ' 个' : '');
+  renderApiStatus();
+}
+
+function renderProviderPoolManager() {
+  const wrap = document.getElementById('provider-pool-manager');
+  const list = document.getElementById('provider-pool-active-list');
+  if (!wrap || !list) return;
+  renderProviderPoolSummary();
+  if (!getCloudToken()) {
+    list.innerHTML = '<div class="no-keys" style="padding:.6rem">&#30331;&#24405;&#20113;&#36134;&#21495;&#21518;&#21487;&#31649;&#29702; AI &#35843;&#29992;&#30340;&#27169;&#22411;&#27744;</div>';
+    return;
+  }
+  if (!CLOUD_PROVIDER_POOL_PROFILES.length) {
+    list.innerHTML = '<div class="no-keys" style="padding:.6rem">&#27169;&#22411;&#27744;&#20026;&#31354;&#65292;&#22312;&#19979;&#26041;&#27169;&#22411;&#21015;&#34920;&#28857;&#20987;&#21152;&#20837;&#27744;</div>';
+    return;
+  }
+  list.innerHTML = CLOUD_PROVIDER_POOL_PROFILES.map(p => `
+    <div class="provider-pool-item">
+      <span style="min-width:0;flex:1;display:flex;flex-direction:column;gap:1px">
+        <span style="font-size:12px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.name)}</span>
+        <span style="font-size:10px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.model)} &middot; ${escHtml(p.key_preview)}</span>
+      </span>
+      <button class="pool-mini-btn" onclick="removeCloudProfileFromProviderPool(event,'${p.id}')"><i class="ti ti-minus"></i> &#31227;&#20986;</button>
+    </div>`).join('');
+}
+
+async function refreshCloudProfiles() {
+  if (!getCloudToken()) {
+    CLOUD_PROFILE_CACHE = [];
+    CLOUD_PROVIDER_POOL_IDS = new Set();
+    CLOUD_PROVIDER_POOL_PROFILES = [];
+    renderProviderPoolManager();
+    renderKeyList();
+    renderKeyBar();
+    renderApiStatus();
+    return;
+  }
+  try {
+    const data = await cloudRequest('/api/profiles');
+    CLOUD_PROFILE_CACHE = data.profiles || [];
+    CLOUD_PROVIDER_POOL_IDS = new Set((data.provider_pool && data.provider_pool.ids) || []);
+    CLOUD_PROVIDER_POOL_PROFILES = (data.provider_pool && data.provider_pool.profiles) || [];
+    renderProviderPoolManager();
+    renderKeyList();
+    renderKeyBar();
+    renderApiStatus();
+  } catch(e) {
+    const el = document.getElementById('provider-pool-summary');
+    if (el) el.textContent = e.message;
+    renderApiStatus();
+  }
+}
+
+async function setProviderPoolIds(ids) {
+  const uniqueIds = [...new Set(ids.filter(Boolean))];
+  await cloudRequest('/api/provider-pool', {
+    method: 'POST',
+    body: JSON.stringify({ profile_ids: uniqueIds })
+  });
+  await refreshCloudProfiles();
+}
+
+async function removeCloudProfileFromProviderPool(e, id) {
+  if (e) e.stopPropagation();
+  try {
+    if (!getCloudToken()) { alert('\u8bf7\u5148\u767b\u5f55\u4e91\u8d26\u53f7'); return; }
+    await setProviderPoolIds([...CLOUD_PROVIDER_POOL_IDS].filter(pid => pid !== id));
+  } catch(e2) {
+    alert('\u79fb\u51fa\u6a21\u578b\u6c60\u5931\u8d25\uff1a' + e2.message);
+  }
+}
+
+async function clearProviderPool(e) {
+  if (e) e.stopPropagation();
+  try {
+    if (!getCloudToken()) { alert('\u8bf7\u5148\u767b\u5f55\u4e91\u8d26\u53f7'); return; }
+    await setProviderPoolIds([]);
+  } catch(e2) {
+    alert('\u6e05\u7a7a\u6a21\u578b\u6c60\u5931\u8d25\uff1a' + e2.message);
+  }
+}
+async function toggleCloudProfileProviderPool(e, id) {
+  if (e) e.stopPropagation();
+  try {
+    if (!getCloudToken()) { alert('请先登录云账号'); return; }
+    if (CLOUD_PROVIDER_POOL_IDS.has(id)) await setProviderPoolIds([...CLOUD_PROVIDER_POOL_IDS].filter(pid => pid !== id));
+    else await setProviderPoolIds([...CLOUD_PROVIDER_POOL_IDS, id]);
+  } catch(e2) {
+    alert('更新共享云模型池失败：' + e2.message);
+  }
+}
+
+async function deleteCloudProfile(e, id) {
+  if (e) e.stopPropagation();
+  try {
+    if (!getCloudToken()) { alert('请先登录云账号'); return; }
+    const profile = CLOUD_PROFILE_CACHE.find(p => p.id === id);
+    const name = profile ? profile.name : id;
+    if (!confirm('删除共享云模型“' + name + '”？这会从共享账号模型记录中删除，小红书和旁系工具也会看不到。')) return;
+    await cloudRequest('/api/profiles/' + encodeURIComponent(id), { method: 'DELETE' });
+    await refreshCloudProfiles();
+  } catch(e2) {
+    alert('删除共享云模型失败：' + e2.message);
+  }
+}
+
+async function toggleLocalKeyProviderPool(e, id) {
+  if (e) e.stopPropagation();
+  const key = loadKeys().find(k => k.id === id);
+  if (!key) return;
+  if (isLocalKeyInProviderPool(key)) return removeLocalKeyFromProviderPool(e, id);
+  return addLocalKeyToProviderPool(e, id);
+}
+
+async function removeLocalKeyFromProviderPool(e, id) {
+  if (e) e.stopPropagation();
+  try {
+    if (!getCloudToken()) { alert('\u8bf7\u5148\u767b\u5f55\u4e91\u8d26\u53f7'); return; }
+    const key = loadKeys().find(k => k.id === id);
+    if (!key) return;
+    const profileId = getProviderPoolIdForLocalKey(key);
+    await setProviderPoolIds([...CLOUD_PROVIDER_POOL_IDS].filter(pid => pid !== profileId));
+  } catch(e2) {
+    alert('\u79fb\u51fa\u6a21\u578b\u6c60\u5931\u8d25\uff1a' + e2.message);
+  }
+}
+
+async function addLocalKeyToProviderPool(e, id) {
+  if (e) e.stopPropagation();
+  try {
+    if (!getCloudToken()) { alert('\u8bf7\u5148\u767b\u5f55\u4e91\u8d26\u53f7\uff0c\u7136\u540e\u518d\u52a0\u5165\u5e76\u53d1\u6a21\u578b\u6c60'); return; }
+    const key = loadKeys().find(k => k.id === id);
+    if (!key) return;
+    const profile = await upsertKeyToCloudProfile(key, true);
+    const profileId = (profile && profile.id) || getProviderPoolIdForLocalKey(key);
+    await setProviderPoolIds([...CLOUD_PROVIDER_POOL_IDS, profileId]);
+  } catch(e2) {
+    alert('\u52a0\u5165\u6a21\u578b\u6c60\u5931\u8d25\uff1a' + e2.message);
+  }
+}
+
+async function cloudAuth(mode) {
+  const username = document.getElementById('cloud-username').value.trim();
+  const password = document.getElementById('cloud-password').value;
+  if (!username || !password) { alert('请输入用户名和密码'); return; }
+  const data = await cloudRequest('/api/auth/' + mode, {
+    method: 'POST',
+    body: JSON.stringify({ username, password })
+  });
+  setCloudToken(data.token);
+  localStorage.setItem('mc_cloud_user', JSON.stringify(data.user));
+  renderCloudStatus(data.user);
+  await refreshCloudProfiles();
+}
+
+async function cloudLogin() {
+  try { await cloudAuth('login'); }
+  catch(e) { alert('登录失败：' + e.message); }
+}
+
+async function cloudRegister() {
+  try { await cloudAuth('register'); }
+  catch(e) { alert('注册失败：' + e.message); }
+}
+
+
+function shouldAutoAddProviderPool() {
+  const el = document.getElementById('auto-add-provider-pool');
+  return !el || el.checked;
+}
+
+function updateLocalCloudProfileId(localId, cloudProfileId) {
+  if (!localId || !cloudProfileId) return;
+  const keys = loadKeys();
+  const idx = keys.findIndex(k => k.id === localId);
+  if (idx < 0 || keys[idx].cloud_profile_id === cloudProfileId) return;
+  keys[idx] = { ...keys[idx], cloud_profile_id: cloudProfileId };
+  saveKeys(keys);
+}
+
+async function upsertKeyToCloudProfile(k, addToProviderPool) {
+  if (!getCloudToken() || !k) return null;
+  const data = await cloudRequest('/api/profiles', {
+    method: 'POST',
+    body: JSON.stringify({
+      id: k.cloud_profile_id || k.id,
+      name: k.name,
+      mode: k.mode || 'openai',
+      base_url: k.url,
+      model: k.model,
+      disguise: k.disguise || 'none',
+      api_key: k.val,
+      set_active: true,
+      add_to_provider_pool: !!addToProviderPool
+    })
+  });
+  if (data.profile && data.profile.id) updateLocalCloudProfileId(k.id, data.profile.id);
+  return data.profile || null;
+}
+
+async function syncLocalKeysToCloud() {
+  try {
+    if (!getCloudToken()) { alert('\u8bf7\u5148\u767b\u5f55\u4e91\u8d26\u53f7'); return; }
+    const keys = loadKeys();
+    if (!keys.length) { alert('\u672c\u5730\u6ca1\u6709\u53ef\u540c\u6b65\u7684 Key'); return; }
+    for (const k of keys) await upsertKeyToCloudProfile(k, true);
+    await refreshCloudProfiles();
+    alert('\u5df2\u540c\u6b65 ' + keys.length + ' \u4e2a\u672c\u5730\u6a21\u578b\u8bb0\u5f55\u5230\u4e91\u7aef\uff0c\u5e76\u52a0\u5165\u5e76\u53d1\u6a21\u578b\u6c60');
+  } catch(e) {
+    alert('\u540c\u6b65\u5931\u8d25\uff1a' + e.message);
+  }
+}
+
+async function createCloudApiToken() {
+  try {
+    if (!getCloudToken()) { alert('请先登录云账号'); return; }
+    const data = await cloudRequest('/api/auth/token', {
+      method: 'POST',
+      body: JSON.stringify({ label: 'external-ai' })
+    });
+    setExternalApiToken(data.token);
+    renderApiStatus();
+    await navigator.clipboard.writeText(data.token).catch(() => {});
+    prompt('这是给其他 AI 工具使用的账号 API Token。请保存；已尝试复制到剪贴板。', data.token);
+  } catch(e) {
+    alert('生成失败：' + e.message);
+  }
+}
+
+async function copyApiCommand() {
+  const cmd = buildExternalApiCommand();
+  const box = document.getElementById('api-command-box');
+  if (box) box.value = cmd;
+  await navigator.clipboard.writeText(cmd).catch(() => {});
+}
+
+function getActiveKey() {
+  if (localStorage.getItem('mc_active_cloud_profile')) return null;
+  const id = localStorage.getItem('mc_active_key');
+  const keys = loadKeys();
+  return (id ? keys.find(k => k.id === id) : null) || keys[0] || null;
+}
+function setActiveKey(id) { localStorage.setItem('mc_active_key', id); }
+
+function getActiveCloudProfile() {
+  const id = localStorage.getItem('mc_active_cloud_profile');
+  if (id) return CLOUD_PROFILE_CACHE.find(p => p.id === id) || null;
+  if (CLOUD_PROVIDER_POOL_PROFILES.length) return CLOUD_PROVIDER_POOL_PROFILES[0];
+  return CLOUD_PROFILE_CACHE[0] || null;
+}
+
+function setActiveCloudProfile(id) {
+  if (id) localStorage.setItem('mc_active_cloud_profile', id);
+}
+
+function getActiveProviderSelection() {
+  const local = getActiveKey();
+  if (local) return { type: 'local', item: local };
+  const cloud = getActiveCloudProfile();
+  return cloud ? { type: 'cloud', item: cloud } : null;
+}
+
+async function refreshCloudProfilesFromButton() {
+  try {
+    if (!getCloudToken()) { alert('请先登录云账号'); return; }
+    await refreshCloudProfiles();
+    alert('已刷新共享模型：' + CLOUD_PROFILE_CACHE.length + ' 个');
+  } catch(e) {
+    alert('刷新共享模型失败：' + e.message);
+  }
+}
+function renderKeyBar() {
+  const selected = getActiveProviderSelection();
+  const dot = document.getElementById('key-dot');
+  const lbl = document.getElementById('key-label');
+  if (selected) {
+    const k = selected.item;
+    dot.classList.add('active');
+    lbl.classList.add('set');
+    if (selected.type === 'cloud') lbl.textContent = k.name + '  ·  共享云模型 · ' + (k.model || '');
+    else lbl.textContent = k.name + '  ·  ' + k.val.slice(0,8) + '••••' + k.val.slice(-4);
+  } else {
+    if (getCloudToken()) {
+      dot.classList.add('active');
+      lbl.classList.add('set');
+      lbl.textContent = CLOUD_PROVIDER_POOL_PROFILES.length
+        ? '共享云模型池可用 · ' + CLOUD_PROVIDER_POOL_PROFILES.length + ' 个'
+        : '云账号已登录 · 待刷新共享模型';
+    } else {
+      dot.classList.remove('active');
+      lbl.classList.remove('set');
+      lbl.textContent = '未设置 API Key';
+    }
+  }
+  renderApiStatus();
+}
+
+function renderKeyList() {
+  const keys   = loadKeys();
+  const active = getActiveKey();
+  const el     = document.getElementById('key-list');
+  const cloudOnly = getCloudOnlyProfiles(keys);
+  renderProviderPoolSummary();
+  if (!keys.length && !cloudOnly.length) {
+    el.innerHTML = getCloudToken()
+      ? '<div class="no-keys">云账号里还没有共享模型。请先在小红书工具点“同步本地 Key”，或在这里新增一个 Key。</div>'
+      : '<div class="no-keys">&#26242;&#26080; Key&#65292;&#35831;&#22312;&#21491;&#20391;&#28155;&#21152;</div>';
+    return;
+  }
+  const localHtml = keys.map(k => {
+    const modeLabel = k.mode === 'anthropic' ? 'Anthropic' : 'OpenAI';
+    const disguiseLabel = k.disguise && k.disguise !== 'none' ? ' \u2192 ' + (k.disguise === 'openai' ? 'OpenAI' : 'Claude') : '';
+    const inPool = isLocalKeyInProviderPool(k);
+    const poolClass = inPool ? 'key-item-pool remove' : 'key-item-pool';
+    const poolTitle = inPool ? '&#20174;&#24182;&#21457;&#27169;&#22411;&#27744;&#31227;&#20986;' : '&#21152;&#20837;&#24182;&#21457;&#27169;&#22411;&#27744;';
+    const poolLabel = inPool ? '&#31227;&#20986;&#27744;' : '&#21152;&#20837;&#27744;';
+    const poolIcon = inPool ? 'ti-minus' : 'ti-layers-selected';
+    return `
+    <div class="key-item ${active && active.id === k.id ? 'active-key' : ''}" onclick="selectKey('${k.id}')">
+      <div class="key-item-dot"></div>
+      <div class="key-item-info">
+        <div class="key-item-name">${escHtml(k.name)}</div>
+        <div class="key-item-val">${modeLabel}${disguiseLabel} &middot; ${escHtml(k.model || '-')} &middot; ${escHtml(k.val.slice(0,6))}&bull;&bull;&bull;&bull;${escHtml(k.val.slice(-3))}</div>
+      </div>
+      <button class="${poolClass}" onclick="toggleLocalKeyProviderPool(event,'${k.id}')" title="${poolTitle}"><i class="ti ${poolIcon}"></i> ${poolLabel}</button>
+      <button class="key-item-del" onclick="editKey(event,'${k.id}')" title="&#32534;&#36753;" style="color:var(--text-3)"><i class="ti ti-pencil"></i></button>
+      <button class="key-item-del" onclick="deleteKey(event,'${k.id}')" title="&#21024;&#38500;"><i class="ti ti-trash"></i></button>
+    </div>`;
+  }).join('');
+  const cloudHtml = cloudOnly.map(p => {
+    const inPool = isCloudProfileInProviderPool(p);
+    const poolClass = inPool ? 'key-item-pool remove' : 'key-item-pool';
+    const poolLabel = inPool ? '移出池' : '加入池';
+    const poolIcon = inPool ? 'ti-minus' : 'ti-layers-selected';
+    return `
+    <div class="key-item cloud-profile-item ${getActiveCloudProfile() && getActiveCloudProfile().id === p.id ? 'active-key' : ''}" onclick="selectCloudProfile('${p.id}')">
+      <div class="key-item-dot" style="background:var(--green)"></div>
+      <div class="key-item-info">
+        <div class="key-item-name">${escHtml(p.name)} <span style="font-size:10px;color:var(--green);font-weight:500">共享云模型</span></div>
+        <div class="key-item-val">${escHtml(p.mode === 'anthropic' ? 'Anthropic' : 'OpenAI')} &middot; ${escHtml(p.model || '-')} &middot; ${escHtml(p.key_preview || 'cloud')}</div>
+      </div>
+      <button class="${poolClass}" onclick="event.stopPropagation();toggleCloudProfileProviderPool(event,'${p.id}')"><i class="ti ${poolIcon}"></i> ${poolLabel}</button>
+      <button class="key-item-del" onclick="event.stopPropagation();deleteCloudProfile(event,'${p.id}')" title="删除共享云模型"><i class="ti ti-trash"></i></button>
+    </div>`;
+  }).join('');
+  el.innerHTML = localHtml + cloudHtml;
+}
+function selectKey(id) { setActiveKey(id); localStorage.removeItem('mc_active_cloud_profile'); renderKeyList(); renderKeyBar(); renderApiStatus(); }
+function selectCloudProfile(id) { setActiveCloudProfile(id); localStorage.removeItem('mc_active_key'); renderKeyList(); renderKeyBar(); renderApiStatus(); }
+
+function onModeChange() {
+  const mode = document.getElementById('inp-mode').value;
+  const row  = document.getElementById('disguise-row');
+  row.style.display = mode === 'anthropic' ? 'none' : 'flex';
+}
+
+
+function extractRelayConfig(raw) {
+  let text = String(raw || '').trim();
+  if (!text) throw new Error('empty');
+
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fenced) text = fenced[1].trim();
+
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch (_) {
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start < 0 || end <= start) throw new Error('not-json');
+    parsed = JSON.parse(text.slice(start, end + 1));
+  }
+
+  if (typeof parsed === 'string') parsed = JSON.parse(parsed);
+  if (!parsed || typeof parsed !== 'object') throw new Error('not-object');
+  return parsed;
+}
+
+function normalizeRelayBaseUrl(rawUrl) {
+  let value = String(rawUrl || '').trim();
+  if (!value) throw new Error('missing-url');
+  if (!/^https?:\/\//i.test(value)) value = 'https://' + value;
+
+  const u = new URL(value);
+  u.hash = '';
+  u.search = '';
+
+  let path = u.pathname.replace(/\/+/g, '/').replace(/\/+$/, '');
+  path = path.replace(/\/(chat\/completions|models)$/i, '');
+  path = path.replace(/\/v1\/(chat\/completions|models)$/i, '/v1');
+  path = path.replace(/\/+$/, '');
+
+  if (!path || path === '/') path = '/v1';
+  if (!/(^|\/)v1$/i.test(path) && !/\/v1\//i.test(path)) path = path + '/v1';
+
+  u.pathname = path;
+  return u.toString().replace(/\/+$/, '');
+}
+
+function getFirstString(obj, names) {
+  for (const name of names) {
+    const value = obj && obj[name];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
+
+function guessRelayName(cfg, normalizedUrl) {
+  const explicit = getFirstString(cfg, ['name', 'channel_name', 'channelName', 'channel', 'title']);
+  if (explicit) return explicit.slice(0, 30);
+  try {
+    const host = new URL(normalizedUrl).hostname.replace(/^api\./i, '');
+    return host.split('.')[0].slice(0, 30) || 'Relay';
+  } catch (_) {
+    return 'Relay';
+  }
+}
+
+async function importRelayConfig(shouldSniff) {
+  const rawEl = document.getElementById('relay-config-raw');
+  try {
+    const cfg = extractRelayConfig(rawEl.value);
+    const key = getFirstString(cfg, ['key', 'api_key', 'apiKey', 'token', 'secret']);
+    const rawUrl = getFirstString(cfg, ['url', 'base_url', 'baseUrl', 'api_url', 'apiUrl', 'endpoint']);
+    if (!key) throw new Error('missing-key');
+    if (!rawUrl) throw new Error('missing-url');
+
+    const normalizedUrl = normalizeRelayBaseUrl(rawUrl);
+    const model = getFirstString(cfg, ['model', 'model_name', 'modelName']) || (Array.isArray(cfg.models) && cfg.models.length ? String(cfg.models[0]).trim() : '');
+
+    const nameEl = document.getElementById('inp-name');
+    if (!nameEl.value.trim()) nameEl.value = guessRelayName(cfg, normalizedUrl);
+    document.getElementById('inp-url').value = normalizedUrl;
+    document.getElementById('inp-key').value = key;
+    document.getElementById('inp-mode').value = String(cfg.mode || cfg.provider || '').toLowerCase().includes('anthropic') ? 'anthropic' : 'openai';
+    document.getElementById('inp-disguise').value = 'none';
+
+    const sel = document.getElementById('inp-model');
+    if (model) sel.innerHTML = `<option value="${escHtml(model)}">${escHtml(model)}</option>`;
+    else sel.innerHTML = '<option value="">&#8212; &#20808;&#28857;&#21491;&#36793;&#21957;&#25506;&#21487;&#29992;&#27169;&#22411; &#8212;</option>';
+
+    onModeChange();
+    if (shouldSniff) await sniffModels();
+    else alert('\u5df2\u8bc6\u522b\u5e76\u586b\u5199\u4e2d\u8f6c\u7ad9\u914d\u7f6e\uff0c\u8bf7\u786e\u8ba4\u6a21\u578b\u540e\u4fdd\u5b58\u3002');
+  } catch (e) {
+    const detail = e && e.message ? e.message : String(e);
+    alert('\u65e0\u6cd5\u8bc6\u522b\u4e2d\u8f6c\u7ad9\u914d\u7f6e\uff0c\u8bf7\u786e\u8ba4\u5185\u5bb9\u91cc\u5305\u542b key \u548c url \u5b57\u6bb5\u3002\n\n\u9519\u8bef\uff1a' + detail);
+  }
+}
+
+async function sniffModels() {
+  let url = document.getElementById('inp-url').value.trim().replace(/\/+$/, '');
+  const key = document.getElementById('inp-key').value.trim();
+  const mode = document.getElementById('inp-mode').value;
+  const btn = document.getElementById('sniff-btn');
+  const sel = document.getElementById('inp-model');
+
+  if (!url) { alert('请先填写 API URL'); return; }
+  if (!key) { alert('请先填写 API Key'); return; }
+  if (mode !== 'anthropic') {
+    try {
+      url = normalizeRelayBaseUrl(url);
+      document.getElementById('inp-url').value = url;
+    } catch(e) {
+      alert('API URL 无法识别：' + e.message);
+      return;
+    }
+  }
+  if (!url.startsWith('http')) { alert('请输入有效的 API URL（以 http 开头）'); return; }
+
+  btn.innerHTML = '<i class="ti ti-loader" style="font-size:14px"></i> 嗅探中...';
+  btn.disabled = true;
+  sel.innerHTML = '<option value="">加载中...</option>';
+
+  try {
+    let models = [];
+    if (mode === 'anthropic') {
+      // Anthropic doesn't have a public list endpoint; use known models
+      models = [
+        'claude-opus-4-5', 'claude-sonnet-4-5', 'claude-haiku-4-5',
+        'claude-opus-4-6', 'claude-sonnet-4-6',
+        'claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022',
+        'claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'
+      ];
+    } else {
+      const r = await fetch('/api/models', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ base_url: url, api_key: key, mode })
+      });
+      const d = await r.json().catch(() => {
+        throw new Error('模型嗅探接口没有返回 JSON。');
+      });
+      if (!r.ok) throw new Error(d.error?.message || '请求失败 ' + r.status);
+      if (d.base_url) {
+        url = d.base_url;
+        document.getElementById('inp-url').value = url;
+      }
+      const raw = d.models || d.data || [];
+      models = raw
+        .map(m => typeof m === 'string' ? m : (m.id || m.name || ''))
+        .filter(Boolean)
+        .sort();
+    }
+
+    if (!models.length) throw new Error('未找到可用模型');
+    sel.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">嗅探失败，请手动输入</option>';
+    // fallback: turn select into text input feel by adding a manual option
+    const manual = prompt('自动嗅探失败：' + e.message + '\n\n请手动输入模型名：');
+    if (manual) {
+      sel.innerHTML = `<option value="${manual}">${manual}</option>`;
+    }
+  }
+
+  btn.innerHTML = '<i class="ti ti-radar" style="font-size:14px"></i> 嗅探模型';
+  btn.disabled = false;
+}
+
+function editKey(e, id) {
+  e.stopPropagation();
+  const k = loadKeys().find(k => k.id === id);
+  if (!k) return;
+
+  document.getElementById('inp-edit-id').value  = id;
+  document.getElementById('inp-name').value      = k.name || '';
+  document.getElementById('inp-url').value       = k.url  || '';
+  document.getElementById('inp-key').value       = k.val  || '';
+  document.getElementById('inp-mode').value      = k.mode || 'openai';
+  document.getElementById('inp-disguise').value  = k.disguise || 'none';
+  onModeChange();
+
+  // pre-fill model select with saved model
+  const sel = document.getElementById('inp-model');
+  sel.innerHTML = k.model ? `<option value="${k.model}">${k.model}</option>` : '<option value="">— 先点右边嗅探可用模型 —</option>';
+
+  document.getElementById('form-label').textContent  = '编辑 Key';
+  document.getElementById('cancel-edit-btn').style.display = 'inline-flex';
+  document.getElementById('save-key-btn').innerHTML = '<i class="ti ti-device-floppy"></i> \u4fdd\u5b58\u4fee\u6539';
+
+  // scroll form into view
+  document.getElementById('key-editor-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function cancelEdit() {
+  document.getElementById('inp-edit-id').value  = '';
+  document.getElementById('inp-name').value     = '';
+  document.getElementById('inp-url').value      = '';
+  document.getElementById('inp-key').value      = '';
+  document.getElementById('inp-mode').value     = 'openai';
+  document.getElementById('inp-disguise').value = 'none';
+  document.getElementById('inp-model').innerHTML = '<option value="">— 先点右边嗅探可用模型 —</option>';
+  document.getElementById('form-label').textContent        = '添加新 Key';
+  document.getElementById('cancel-edit-btn').style.display = 'none';
+  document.getElementById('save-key-btn').innerHTML = '<i class="ti ti-plus"></i> \u4fdd\u5b58\u5e76\u4f7f\u7528';
+  onModeChange();
+}
+
+async function addKey() {
+  const editId   = document.getElementById('inp-edit-id').value;
+  const name     = document.getElementById('inp-name').value.trim();
+  const val      = document.getElementById('inp-key').value.trim();
+  const mode     = document.getElementById('inp-mode').value;
+  let url        = document.getElementById('inp-url').value.trim().replace(/\/+$/, '');
+  const disguise = mode === 'anthropic' ? 'none' : document.getElementById('inp-disguise').value;
+  const model    = document.getElementById('inp-model').value.trim();
+  if (mode !== 'anthropic' && url) {
+    try {
+      url = normalizeRelayBaseUrl(url);
+      document.getElementById('inp-url').value = url;
+    } catch(e) {
+      alert('API URL 无法识别：' + e.message);
+      return;
+    }
+  }
+  if (mode === 'anthropic' && url && !url.startsWith('http')) { alert('\u8bf7\u8f93\u5165\u6709\u6548\u7684 API URL\uff08\u4ee5 http \u5f00\u5934\uff09'); return; }
+  if (!name)  { alert('\u8bf7\u8f93\u5165\u540d\u79f0'); return; }
+  if (!url || !url.startsWith('http')) { alert('\u8bf7\u8f93\u5165\u6709\u6548\u7684 API URL\uff08\u4ee5 http \u5f00\u5934\uff09'); return; }
+  if (!val)   { alert('\u8bf7\u8f93\u5165 API Key'); return; }
+  if (!model) { alert('\u8bf7\u5148\u55c5\u63a2\u6216\u9009\u62e9\u6a21\u578b'); return; }
+
+  const keys = loadKeys();
+  let savedKey = null;
+  if (editId) {
+    const idx = keys.findIndex(k => k.id === editId);
+    if (idx > -1) {
+      keys[idx] = { ...keys[idx], name, url, val, mode, disguise, model };
+      savedKey = keys[idx];
+    }
+    saveKeys(keys);
+    cancelEdit();
+  } else {
+    const id = 'k_' + Date.now();
+    savedKey = { id, name, url, val, mode, disguise, model };
+    keys.push(savedKey);
+    saveKeys(keys); setActiveKey(id);
+    document.getElementById('inp-name').value  = '';
+    document.getElementById('inp-url').value   = '';
+    document.getElementById('inp-key').value   = '';
+    document.getElementById('inp-mode').value  = 'openai';
+    document.getElementById('inp-disguise').value = 'none';
+    document.getElementById('inp-model').innerHTML = '<option value="">&#8212; &#20808;&#28857;&#21491;&#36793;&#21957;&#25506;&#21487;&#29992;&#27169;&#22411; &#8212;</option>';
+    onModeChange();
+  }
+  renderKeyList(); renderKeyBar();
+
+  if (savedKey && getCloudToken()) {
+    try {
+      await upsertKeyToCloudProfile(savedKey, shouldAutoAddProviderPool());
+      await refreshCloudProfiles();
+    } catch(e) {
+      alert('\u672c\u5730\u5df2\u4fdd\u5b58\uff0c\u4f46\u540c\u6b65\u5230\u4e91\u7aef\u6a21\u578b\u6c60\u5931\u8d25\uff1a' + e.message);
+    }
+  }
+}
+
+function deleteKey(e, id) {
+  e.stopPropagation();
+  if (!confirm('确认删除这个 Key？')) return;
+  const keys = loadKeys().filter(k => k.id !== id);
+  saveKeys(keys);
+  if (localStorage.getItem('mc_active_key') === id) localStorage.removeItem('mc_active_key');
+  renderKeyList(); renderKeyBar();
+}
+
+function openModal()        { document.getElementById('modal-bg').classList.add('open'); renderKeyList(); renderCloudStatus(); renderApiStatus(); refreshCloudProfiles(); }
+function closeModalDirect() { document.getElementById('modal-bg').classList.remove('open'); }
+function closeModal(e)      { if (e.target === document.getElementById('modal-bg')) closeModalDirect(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+document.addEventListener('DOMContentLoaded', () => {
+  renderCloudStatus();
+  renderKeyBar();
+  renderApiStatus();
+  initCustomItems();
+  if (getCloudToken()) refreshCloudProfiles();
+});
+
+// ── App State ────────────────────────────────────────────────────
+const S = {
+  region:  new Set(['MX']),
+  lang:    new Set(['es-MX']),
+  device:  new Set(['android']),
+  cat:     new Set(['Not running out too soon']),
+  benefit: new Set(['Pay water, electricity and gas bills from the app']),
+  type:    new Set(['both']),
+  tone:    new Set(['clear, calm, and protective'])
+};
+const MULTI = new Set(['cat','benefit']);
+
+// Chip event delegation — works for both built-in and dynamically added chips
+document.querySelectorAll('[id^="c-"]').forEach(wrap => {
+  const g = wrap.id.slice(2);
+  wrap.addEventListener('click', e => {
+    // ignore clicks on the delete button inside a chip
+    if (e.target.closest('.chip-del')) return;
+    const chip = e.target.closest('.chip');
+    if (!chip || !chip.dataset.v) return;
+    const v = chip.dataset.v;
+    if (MULTI.has(g)) {
+      if (S[g].has(v)) { if (S[g].size > 1) { S[g].delete(v); chip.classList.remove('on'); } }
+      else { S[g].add(v); chip.classList.add('on'); }
+    } else {
+      wrap.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+      S[g].clear(); S[g].add(v); chip.classList.add('on');
+    }
+  });
+});
+
+// ── Custom categories & benefits ──────────────────────────────────
+function loadCustom(key) {
+  try { return JSON.parse(localStorage.getItem('mc_custom_' + key) || '[]'); } catch(e) { return []; }
+}
+function saveCustom(key, arr) { localStorage.setItem('mc_custom_' + key, JSON.stringify(arr)); }
+
+function initCustomItems() {
+  loadCustom('cat').forEach(item => appendCustomChip('c-cat', 'cat', item, true));
+  loadCustom('bnf').forEach(item => appendCustomChip('c-benefit', 'benefit', item, true));
+}
+
+function appendCustomChip(containerId, group, value, isMulti) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  // avoid duplicates
+  if (wrap.querySelector(`.chip[data-v="${CSS.escape(value)}"]`)) return;
+  const chip = document.createElement('div');
+  chip.className = 'chip chip-custom';
+  chip.dataset.v = value;
+  // label is value (truncated for display)
+  const label = value.length > 12 ? value.slice(0, 11) + '…' : value;
+  chip.title = value;
+  chip.innerHTML = `<span>${label}</span><button class="chip-del" onclick="removeCustomChip(event,'${containerId}','${group}','${value.replace(/'/g,"\\'")}')">×</button>`;
+  wrap.appendChild(chip);
+}
+
+function addCustomCat() {
+  const inp = document.getElementById('custom-cat-inp');
+  const val = inp.value.trim();
+  if (!val) return;
+  const existing = loadCustom('cat');
+  if (existing.includes(val)) { inp.value = ''; return; }
+  existing.push(val);
+  saveCustom('cat', existing);
+  appendCustomChip('c-cat', 'cat', val, true);
+  // auto-select it
+  const chip = document.querySelector(`#c-cat .chip[data-v="${CSS.escape(val)}"]`);
+  if (chip) {
+    S.cat.add(val); chip.classList.add('on');
+  }
+  inp.value = '';
+}
+
+function addCustomBnf() {
+  const inp = document.getElementById('custom-bnf-inp');
+  const val = inp.value.trim();
+  if (!val) return;
+  const existing = loadCustom('bnf');
+  if (existing.includes(val)) { inp.value = ''; return; }
+  existing.push(val);
+  saveCustom('bnf', existing);
+  appendCustomChip('c-benefit', 'benefit', val, true);
+  // auto-select it
+  const chip = document.querySelector(`#c-benefit .chip[data-v="${CSS.escape(val)}"]`);
+  if (chip) { S.benefit.add(val); chip.classList.add('on'); }
+  inp.value = '';
+}
+
+function removeCustomChip(e, containerId, group, value) {
+  e.stopPropagation();
+  const storageKey = group === 'cat' ? 'cat' : 'bnf';
+  const updated = loadCustom(storageKey).filter(v => v !== value);
+  saveCustom(storageKey, updated);
+  // remove from S state
+  S[group === 'cat' ? 'cat' : 'benefit'].delete(value);
+  // ensure at least one cat selected
+  if (group === 'cat' && S.cat.size === 0) {
+    const first = document.querySelector('#c-cat .chip');
+    if (first) { S.cat.add(first.dataset.v); first.classList.add('on'); }
+  }
+  // remove DOM element
+  const wrap = document.getElementById(containerId);
+  const chip = wrap?.querySelector(`.chip[data-v="${CSS.escape(value)}"]`);
+  chip?.remove();
+}
+
+// ── Helpers ──────────────────────────────────────────────────────
+function blen(s) {
+  let n = 0;
+  for (let i = 0; i < s.length; i++) n += s.charCodeAt(i) > 127 ? 2 : 1;
+  return n;
+}
+
+// ── Ad copy scoring ───────────────────────────────────────────────
+// Four dimensions based on Google Ads copy research:
+// 1. Hook strength  – does the opening grab attention? (power words, numbers, questions)
+// 2. Relevance      – do benefit keywords appear in the copy?
+// 3. CTA presence   – is there an action verb driving the click?
+// 4. Space usage    – byte utilization efficiency (too short wastes slot, over limit fails)
+
+const HOOK_WORDS = [
+  'discover','find','explore','unlock','join','get','try','see','now','free',
+  'new','best','top','real','true','only','must','why','how','what',
+  'descubre','descarga','instala','encuentra','conoce','prueba','usa','empieza','paga','recarga','consulta',
+  'transfiere','retira','agrega','controla','administra','organiza','revisa','resuelve',
+  'hoy','ahora','facil','claro','tranquilo','seguro','dinero','saldo',
+  '发现','探索','免费','立即','最好','真实','加入','获取','了解','开始',
+  'entdecke','finde','kostenlos','jetzt','beste','echte','neu',
+  'découvrez','trouvez','gratuit','maintenant','meilleur','vrai','nouveau'
+];
+const CTA_WORDS = [
+  'download','install','get','try','join','start','explore','discover','find','see',
+  'shop','browse','learn','watch','read','sign up','open','use',
+  'download now','get it','try it','install now',
+  'descarga','instala','usa','empieza','prueba','conoce','abre','paga','recarga',
+  'consulta','revisa','transfiere','envia','recibe','agrega','deposita','retira',
+  'programa','cobra','maneja','controla','administra',
+  '下载','安装','开始','加入','探索','发现','立即','免费下载','体验',
+  'herunterladen','installieren','jetzt','starten','entdecken',
+  'télécharger','installer','commencer','découvrir','essayer'
+];
+
+const MI_CLIP_BENEFIT_CONCEPTS = [
+  { keys:['bill','bills','utility','utilities','water','electricity','gas','services','service','cfe','naturgy'], terms:['servicio','servicios','recibo','recibos','agua','luz','gas','cfe','naturgy','ecogas','z-gas','pagar','paga'] },
+  { keys:['airtime','top-up','top-ups','phone','carrier','telcel','movistar','at&t'], terms:['recarga','recargas','celular','telefono','telcel','movistar','at&t','saldo'] },
+  { keys:['balance','available','foresight','spending','money'], terms:['saldo','dinero','disponible','consulta','revisa','antes de gastar','control'] },
+  { keys:['history','transaction','transactions','movement','movements'], terms:['movimientos','historial','transacciones','pagas','recibes'] },
+  { keys:['transfer','transfers','send','receive','account'], terms:['transferencia','transferencias','transfiere','envia','recibe','cuenta'] },
+  { keys:['cash-in','cash in','add cash','deposit','points','7-eleven','soriana','kiosko'], terms:['agrega efectivo','deposita','efectivo','saldo','7-eleven','soriana','kiosko','farmacias del ahorro','puntos'] },
+  { keys:['cash-out','cash out','withdraw','withdrawal'], terms:['retira efectivo','retira','retiro','efectivo','soriana','kiosko','willys'] },
+  { keys:['cashback','reward','rewards','promo','promos'], terms:['cashback','reembolso','recompensa','recompensas','promo','promociones','compras'] },
+  { keys:['contactless','tap','store','payment','payments'], terms:['pago','pagos','sin contacto','tienda','telefono','celular'] },
+  { keys:['school','tuition','education'], terms:['colegiatura','colegiaturas','escuela','escuelas','educacion'] },
+  { keys:['tax','taxes','government','fees'], terms:['predial','tenencia','impuestos','gobierno','tramites'] },
+  { keys:['recurring','schedule','on time','late'], terms:['programa','recurrentes','a tiempo','recuerda','pagos'] },
+  { keys:['support','24/7','help'], terms:['ayuda','soporte','atencion','24/7','respaldo'] },
+  { keys:['clip','backed'], terms:['clip','respaldo'] }
+];
+
+const MI_CLIP_BRAND_TERMS = [
+  'control','tranquilidad','claro','clara','claridad','seguro','segura','confianza',
+  'facil','simple','diario','dia a dia','dinero','saldo','sin salir','desde casa'
+];
+
+const MI_CLIP_CONCRETE_FUNCTION_TERMS = [
+  'paga','pagar','recarga','recargas','consulta','revisa','transfiere','envia',
+  'recibe','agrega','deposita','retira','programa','historial','movimientos',
+  'servicios','recibos','agua','luz','gas','saldo','efectivo','cashback'
+];
+
+const MI_CLIP_HYPERBOLE_TERMS = [
+  'milagro','increible','nunca','jamas','garantizado','asegurado','sin riesgo',
+  'al instante','instantaneo','gratis siempre','el mejor','la mejor','numero 1'
+];
+
+function scoreText(text, type, benefits) {
+  const t   = normalizeForScore(text);
+  const max = type === 'short' ? 25 : 75;
+  const b   = blen(text);
+
+  // 1. Hook (0-10): power word in first third of text
+  const firstThird = t.slice(0, Math.ceil(t.length / 3));
+  const hasHook    = HOOK_WORDS.some(w => firstThird.includes(normalizeForScore(w)));
+  const hasNumber  = /\d/.test(text.slice(0, Math.ceil(text.length / 2)));
+  const hasQuestion = text.includes('?');
+  const hookScore  = Math.min(10, (hasHook ? 6 : 0) + (hasNumber ? 2 : 0) + (hasQuestion ? 2 : 0));
+
+  // 2. Relevance (0-10): benefit keywords present
+  const relScore = miClipRelevanceScore(t, benefits);
+
+  // 3. CTA (0-10): action verb present
+  const hasCTA   = CTA_WORDS.some(w => t.includes(normalizeForScore(w)));
+  const ctaScore = hasCTA ? 10 : (type === 'short' ? 4 : 2); // short headlines less penalized
+
+  // 4. Space usage (0-10): sweet spot 75-100% of limit
+  const pct = b / max;
+  const spaceScore = b > max ? 0 : pct >= 0.75 ? 10 : pct >= 0.55 ? 7 : pct >= 0.35 ? 4 : 2;
+
+  const brandScore = miClipBrandFitScore(t);
+  const total = Math.round(hookScore * 0.22 + relScore * 0.34 + ctaScore * 0.18 + spaceScore * 0.10 + brandScore * 0.16);
+
+  return { hook: hookScore, rel: relScore, cta: ctaScore, space: spaceScore, brand_fit: brandScore, total };
+}
+
+function normalizeForScore(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[¡!]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function miClipRelevanceScore(normalizedText, benefits) {
+  const selected = Array.isArray(benefits) ? benefits : [];
+  const selectedNeedles = normalizeForScore(selected.join(' ')).split(/[\s,&/()·+.-]+/).filter(w => w.length > 3);
+  const directMatches = selectedNeedles.filter(w => normalizedText.includes(w)).length;
+  let conceptMatches = 0;
+  const selectedText = normalizeForScore(selected.join(' '));
+  MI_CLIP_BENEFIT_CONCEPTS.forEach(group => {
+    const relevant = group.keys.some(key => selectedText.includes(normalizeForScore(key)));
+    if (!relevant) return;
+    if (group.terms.some(term => normalizedText.includes(normalizeForScore(term)))) conceptMatches++;
+  });
+  const concreteMatches = MI_CLIP_CONCRETE_FUNCTION_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
+  const weighted = conceptMatches * 2 + Math.min(2, directMatches) + Math.min(2, concreteMatches);
+  return Math.min(10, weighted >= 6 ? 10 : weighted >= 4 ? 8 : weighted >= 2 ? 6 : concreteMatches ? 5 : 2);
+}
+
+function miClipBrandFitScore(normalizedText) {
+  const brandHits = MI_CLIP_BRAND_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
+  const concreteHits = MI_CLIP_CONCRETE_FUNCTION_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
+  const hyperboleHits = MI_CLIP_HYPERBOLE_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
+  const vaguePronounPenalty = /\b(esto|eso|esta app|estas funciones)\b/.test(normalizedText) ? 1 : 0;
+  let score = 4 + Math.min(3, brandHits) + Math.min(3, concreteHits);
+  score -= Math.min(4, hyperboleHits * 2 + vaguePronounPenalty);
+  return Math.max(0, Math.min(10, score));
+}
+
+function scoreColor(v) {
+  return v >= 7 ? 'sc-green' : v >= 4 ? 'sc-amber' : 'sc-red';
+}
+
+function scoreMeter(label, val) {
+  const cls = scoreColor(val);
+  return `<div class="score-row">
+    <span class="score-label">${label}</span>
+    <div class="score-bar-wrap"><div class="score-bar ${cls}" style="width:${val*10}%"></div></div>
+    <span class="score-val ${cls}">${val}</span>
+  </div>`;
+}
+
+let bank = [];
+
+function card(text, type, region, lang, idx, benefits, langCode, cat) {
+  const max   = type === 'short' ? 25 : 75;
+  const b     = blen(text);
+  const over  = b > max ? '<span class="tag t-warn"><i class="ti ti-alert-triangle" style="font-size:10px"></i> Over limit</span>' : '';
+  const safe  = text.replace(/\\/g,'\\\\').replace(/`/g,'\\`');
+  const sc    = scoreText(text, type, benefits || []);
+  const tcls  = scoreColor(sc.total);
+  const needsTranslation = langCode && !['zh-TW','zh-CN','en'].includes(langCode);
+  const transBlock = needsTranslation ? `
+  <div class="trans-block" id="tr-${idx}">
+    <span class="trans-loading"><i class="ti ti-loader-2" style="font-size:11px"></i> 翻译中...</span>
+  </div>` : '';
+  return `<div class="copy-card" id="cd-${idx}" data-idx="${idx}" data-hook="${sc.hook}" data-rel="${sc.rel}" data-cta="${sc.cta}" data-space="${sc.space}" data-total="${sc.total}">
+  <input type="checkbox" class="card-check" onchange="onCardCheck(${idx},this.checked)" title="选择此条">
+  <div class="card-tags">
+    <span class="tag ${type==='short'?'t-short':'t-long'}">${type==='short'?'Short \u226425B':'Long \u226475B'}</span>
+    ${cat ? `<span class="tag">${cat}</span>` : ''}
+    <span class="tag t-region">${region}</span>
+    <span class="tag t-lang">${lang}</span>
+    ${over}
+  </div>
+  <div class="copy-body">${text}</div>
+  ${transBlock}
+  <div class="score-block">
+    ${scoreMeter('Hook', sc.hook)}
+    ${scoreMeter('Relevance', sc.rel)}
+    ${scoreMeter('CTA', sc.cta)}
+    ${scoreMeter('Space use', sc.space)}
+    <div class="score-total">
+      <span class="score-total-label">Ad appeal score</span>
+      <span class="score-total-val ${tcls}">${sc.total} / 10</span>
+    </div>
+  </div>
+  <div class="card-actions">
+    <button class="act-btn" onclick="doCopy(${idx},\`${safe}\`)"><i class="ti ti-copy"></i> Copy</button>
+    <button class="act-btn" onclick="regenOne(${idx})"><i class="ti ti-refresh"></i> Regenerate</button>
+  </div>
+</div>`;
+}
+
+function doCopy(idx, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const b = document.querySelector(`#cd-${idx} .act-btn`);
+    if (b) {
+      b.classList.add('ok');
+      b.innerHTML = '<i class="ti ti-check"></i> Copied';
+      setTimeout(() => { b.classList.remove('ok'); b.innerHTML = '<i class="ti ti-copy"></i> Copy'; }, 1500);
+    }
+  });
+}
+
+async function translateOne(idx) {
+  const b   = bank[idx];
+  if (!b) return;
+  const box = document.getElementById('tr-' + idx);
+  if (!box) return;
+
+  box.innerHTML = '<span class="trans-loading"><i class="ti ti-loader-2" style="font-size:11px"></i> 翻译中...</span>';
+
+  try {
+    const langName = { 'es-MX':'Mexican Spanish', es:'Mexican Spanish' }[b.langCode] || 'Mexican Spanish';
+    const result = await callAPI(
+      `Translate the following ${langName} Google ad copy into natural Simplified Chinese (简体中文) by default. ` +
+      `Keep it concise, punchy, and suitable for ad copy. Output ONLY the translated text, nothing else.\n\n"${b.text}"`
+    );
+    const translated = result.trim().replace(/^["「『】\s]+|["」』】\s]+$/g, '');
+    bank[idx].translation = translated;
+    const safeT = translated.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    box.innerHTML = `<div class="trans-result">
+      <span class="trans-label"><i class="ti ti-language" style="font-size:11px"></i> 中文</span>
+      <span class="trans-text">${translated}</span>
+      <button class="trans-copy" onclick="navigator.clipboard.writeText('${safeT}')"><i class="ti ti-copy" style="font-size:11px"></i></button>
+    </div>`;
+  } catch(e) {
+    box.innerHTML = `<button class="trans-btn" onclick="translateOne(${idx})"><i class="ti ti-refresh"></i> 重试翻译</button>`;
+  }
+}
+
+async function autoTranslateAll(langCode) {
+  // Translate all cards sequentially with a small delay to avoid rate limits
+  for (let i = 0; i < bank.length; i++) {
+    if (bank[i].langCode === langCode) {
+      await translateOne(i);
+      await new Promise(r => setTimeout(r, 200));
+    }
+  }
+}
+function isDeepSeekProvider(baseUrl, model) {
+  return /deepseek/i.test(baseUrl || '') || /deepseek/i.test(model || '');
+}
+
+function buildOpenAIRequestBody(model, prompt, forceJsonMode) {
+  const body = {
+    model,
+    max_tokens: forceJsonMode ? 3000 : 1000,
+    messages: [{ role: 'user', content: prompt }]
+  };
+
+  if (forceJsonMode) {
+    body.response_format = { type: 'json_object' };
+  }
+
+  return body;
+}
+
+async function callAPI(prompt, opts = {}) {
+  const selected = getActiveProviderSelection();
+  if (!selected) throw new Error('请先配置 API Key 或登录云账号选择共享云模型 — 点击右上角"管理 Key"');
+  if (selected.type === 'cloud') {
+    const token = getCloudToken();
+    if (!token) throw new Error('请先登录云账号');
+    const r = await fetch('/api/prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ prompt, json: Boolean(opts.json), provider: { profile_id: selected.item.id } })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || d.error) throw new Error(d.error || '云模型调用失败：' + r.status);
+    return d.text || '';
+  }
+  const k = selected.item;
+
+  const baseUrl  = (k.url || 'https://api.anthropic.com/v1').replace(/\/+$/, '');
+  const model    = k.model || 'claude-sonnet-4-6';
+  const mode     = k.mode     || 'openai';
+  const disguise = k.disguise || 'none';
+  const wantsJson = Boolean(opts.json);
+  const providerIsDeepSeek = isDeepSeekProvider(baseUrl, model);
+
+  let r;
+
+  if (mode === 'anthropic') {
+    // Native Anthropic — always use /messages format
+    r = await fetch(baseUrl + '/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': k.val,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({ model, max_tokens: wantsJson ? 3000 : 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    return d.content.map(b => b.text || '').join('');
+  }
+
+  // OpenAI-compatible (third-party relay) — apply disguise
+  if (disguise === 'openai' && !providerIsDeepSeek) {
+    // Pretend to be calling OpenAI: use OpenAI-style headers + endpoint
+    r = await fetch(baseUrl + '/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + k.val,
+        'User-Agent': 'OpenAI/v1 PythonBindings/1.40.0',
+        'OpenAI-Organization': 'org-placeholder'
+      },
+      body: JSON.stringify(buildOpenAIRequestBody(model, prompt, wantsJson && providerIsDeepSeek))
+    });
+  } else if (disguise === 'claude') {
+    // Pretend to be calling Claude: use Anthropic-style headers but relay's endpoint
+    r = await fetch(baseUrl + '/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': k.val,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({ model, max_tokens: wantsJson ? 3000 : 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    // Try Anthropic response format first, fall back to OpenAI
+    if (d.content) return d.content.map(b => b.text || '').join('');
+    return d.choices?.[0]?.message?.content || '';
+  } else if (disguise === 'claudecode') {
+    // Simulate Claude Code official environment headers
+    r = await fetch(baseUrl + '/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': k.val,
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'interleaved-thinking-2025-05-14,claude-code-20250219,max-tokens-3-5-sonnet-20250714',
+        'user-agent': 'claude-code/1.0.35',
+        'x-stainless-arch': 'x64',
+        'x-stainless-lang': 'js',
+        'x-stainless-os': 'Windows',
+        'x-stainless-package-version': '0.54.0',
+        'x-stainless-runtime': 'node',
+        'x-stainless-runtime-version': 'v22.14.0'
+      },
+      body: JSON.stringify({ model, max_tokens: wantsJson ? 3000 : 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    if (d.content) return d.content.map(b => b.text || '').join('');
+    return d.choices?.[0]?.message?.content || '';
+  } else {
+    // No disguise — plain OpenAI-compatible call
+    r = await fetch(baseUrl + '/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + k.val
+      },
+      body: JSON.stringify(buildOpenAIRequestBody(model, prompt, wantsJson && providerIsDeepSeek))
+    });
+  }
+
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+  const msg = d.choices?.[0]?.message || {};
+  return msg.content || msg.reasoning_content || '';
+}
+
+function parseCopyJson(raw, expectedType = 'both') {
+  const source = String(raw || '')
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .replace(/```json/gi, '```')
+    .trim();
+
+  const candidates = [];
+  const fenced = source.match(/```[\s\S]*?```/g) || [];
+  fenced.forEach(block => candidates.push(block.replace(/^```[a-z]*\s*/i, '').replace(/```$/i, '').trim()));
+  candidates.push(source);
+
+  for (const text of candidates) {
+    try { return normalizeCopyJson(JSON.parse(text.trim()), expectedType); } catch(e) {}
+    const extracted = extractFirstJsonObject(text);
+    if (extracted) {
+      try { return normalizeCopyJson(JSON.parse(extracted), expectedType); } catch(e) {}
+    }
+  }
+
+  const fallback = parsePlainCopyList(source, expectedType);
+  if (fallback.short.length || fallback.long.length) return fallback;
+
+  throw new Error('Unexpected response format. Raw response: ' + previewRawResponse(source));
+}
+
+function extractFirstJsonObject(text) {
+  let start = -1;
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (start < 0) {
+      if (ch === '{') { start = i; depth = 1; }
+      continue;
+    }
+
+    if (escape) { escape = false; continue; }
+    if (ch === '\\') { escape = true; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+
+    if (ch === '{') depth++;
+    if (ch === '}') depth--;
+    if (depth === 0) return text.slice(start, i + 1);
+  }
+  return '';
+}
+
+function normalizeCopyJson(parsed, expectedType = 'both') {
+  if (Array.isArray(parsed)) return classifyCopyArray(parsed, expectedType);
+  if (!parsed || typeof parsed !== 'object') throw new Error('Invalid JSON object.');
+  const shortCandidates = [
+    parsed.short,
+    parsed.shorts,
+    parsed.headlines,
+    parsed.short_headlines,
+    parsed.shortHeadlines,
+    parsed.short_titles,
+    parsed.shortTitles,
+    parsed.titles
+  ];
+  const longCandidates = [
+    parsed.long,
+    parsed.longs,
+    parsed.descriptions,
+    parsed.long_descriptions,
+    parsed.longDescriptions,
+    parsed.long_copy,
+    parsed.longCopy,
+    parsed.desc,
+    parsed.description
+  ];
+  parsed.short = normalizeCopyArray(shortCandidates);
+  parsed.long = normalizeCopyArray(longCandidates);
+
+  if (!parsed.short.length && !parsed.long.length) {
+    const nested = [parsed.data, parsed.result, parsed.results, parsed.items, parsed.copies, parsed.copy].filter(Boolean);
+    for (const item of nested) {
+      try {
+        const normalized = normalizeCopyJson(item, expectedType);
+        if (normalized.short.length || normalized.long.length) return normalized;
+      } catch(e) {}
+    }
+  }
+
+  if (!parsed.short.length && !parsed.long.length && parsed.text) {
+    return parsePlainCopyList(String(parsed.text), expectedType);
+  }
+
+  if (!parsed.short.length && !parsed.long.length) throw new Error('No copy arrays found.');
+  return parsed;
+}
+
+function normalizeCopyArray(candidates) {
+  const found = candidates.find(v => Array.isArray(v) || typeof v === 'string') || [];
+  const arr = Array.isArray(found) ? found : splitPlainCopyLines(found);
+  return arr.map(item => {
+    if (typeof item === 'string') return item;
+    if (item && typeof item === 'object') return item.text || item.copy || item.content || item.title || '';
+    return '';
+  }).map(cleanCopyLine).filter(Boolean);
+}
+
+function classifyCopyArray(items, expectedType = 'both') {
+  const lines = items.map(item => {
+    if (typeof item === 'string') return item;
+    if (item && typeof item === 'object') return item.text || item.copy || item.content || item.title || item.description || '';
+    return '';
+  }).map(cleanCopyLine).filter(Boolean);
+
+  const out = { short: [], long: [] };
+  lines.forEach(line => {
+    const bytes = blen(line);
+    if (expectedType === 'short') out.short.push(line);
+    else if (expectedType === 'long') out.long.push(line);
+    else if (bytes <= 25) out.short.push(line);
+    else out.long.push(line);
+  });
+  return out;
+}
+
+function parsePlainCopyList(text, expectedType = 'both') {
+  return classifyCopyArray(splitPlainCopyLines(text), expectedType);
+}
+
+function splitPlainCopyLines(text) {
+  return String(text || '')
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .replace(/```[\s\S]*?```/g, block => block.replace(/^```[a-z]*\s*/i, '').replace(/```$/i, ''))
+    .split(/\r?\n|[；;]/)
+    .map(cleanCopyLine)
+    .filter(line => line && !/^(short|long|headline|description|json|output|result|以下|这里|当然|好的)[:：]?$/i.test(line))
+    .filter(line => !/^\{|\}|\[|\]$/.test(line));
+}
+
+function cleanCopyLine(line) {
+  return String(line || '')
+    .replace(/^[\s"'“”‘’`]+|[\s"'“”‘’`]+$/g, '')
+    .replace(/^\s*(?:[-*•]|\d+[\).、]|[A-Za-z]\)|短标题|长描述|标题|描述|headline|description|short|long)\s*[:：-]?\s*/i, '')
+    .trim();
+}
+
+function previewRawResponse(text) {
+  return String(text || '')
+    .replace(/\s+/g, ' ')
+    .slice(0, 500) || '(empty)';
+}
+
+function getTargets() {
+  return {
+    hook:  parseInt(document.getElementById('tg-hook').value),
+    rel:   parseInt(document.getElementById('tg-rel').value),
+    cta:   parseInt(document.getElementById('tg-cta').value),
+    space: parseInt(document.getElementById('tg-space').value),
+    total: parseInt(document.getElementById('tg-total').value),
+  };
+}
+
+function buildPrompt(regions, lang, device, cat, benefits, type, tone, qty, targets) {
+  const lmap = { 'es-MX':'Mexican Spanish', es:'Mexican Spanish' };
+  const rmap = { MX:'Mexico' };
+  const regionsMx = ['MX'];
+  const langMx = 'es-MX';
+  const rstr = regionsMx.map(r => rmap[r] || r).join(', ');
+  const dev  = device === 'ios' ? 'iOS' : device === 'both' ? 'iOS and Android' : 'Android';
+  const tstr = type === 'short'
+    ? `${qty} short headlines (each <=25 bytes)`
+    : type === 'long'
+    ? `${qty} long descriptions (each <=75 bytes)`
+    : `${qty} short headlines (each <=25 bytes) AND ${qty} long descriptions (each <=75 bytes)`;
+
+  const hints = [
+    regions.includes('MX') ? 'Mexican users may live with limited or variable income and need clarity, control, calm, and practical help for daily money friction.' : '',
+    regions.includes('US') ? 'Use general payment-utility wording only; do not imply availability outside user-supplied markets.' : '',
+    (regions.includes('UK') || regions.includes('DE') || regions.includes('FR') || regions.includes('NL'))
+      ? 'European users appreciate clarity, control, and non-pushy financial wording. Avoid unsupported security, fee, speed, and approval claims.' : ''
+  ].filter(Boolean).join(' ');
+
+  const tg = targets || { hook:6, rel:6, cta:7, space:5, total:7 };
+
+  const scoreGuide = `
+QUALITY SCORING SYSTEM (use this to self-evaluate each copy before output):
+Each dimension is scored 0–10. Your copy MUST meet these minimum targets:
+- Hook ≥ ${tg.hook}/10: Opening must grab attention with natural Mexican Spanish, such as Descarga, Usa, Paga, Recarga, Consulta, Revisa, Transfiere, Agrega, Retira, Programa, Conoce, a useful number, or a simple question in the first third.
+- Relevance ≥ ${tg.rel}/10: Must include the selected __PRODUCT_NAME__ function in es-MX, such as pagar servicios, recargar celular, consultar saldo, transferir, agregar efectivo, retirar efectivo, revisar movimientos, or programar pagos.
+- CTA ≥ ${tg.cta}/10: Must include a clear Mexican Spanish action verb such as Descarga, Usa, Paga, Recarga, Consulta, Revisa, Transfiere, Agrega, Retira, Programa, or Conoce. Headlines without a CTA score 4 or below.
+- Space use ≥ ${tg.space}/10: Aim for 75–100% of the byte limit. Under 35% of limit scores 2. Over limit scores 0.
+- Overall weighted score ≥ ${tg.total}/10: Hook, product relevance, CTA, space use, and __PRODUCT_NAME__ brand fit.
+
+Before finalizing each copy, mentally score it. If it falls below any target, rewrite it until it passes. Only output copy that meets ALL targets.`;
+
+  return `You are a senior Google Ads specialist creating compliant, conversion-oriented copy for __PRODUCT_NAME__ — a personal finance app that helps people in Mexico manage everyday money, payments, bills, transfers, and cash access — targeting ${rstr}.
+
+Platform: Google App Campaign ads for ${dev}
+Language: ${lmap[langMx] || 'Mexican Spanish'}
+Category: ${cat}
+Selected product functions to highlight: ${benefits.join(', ')}
+Tone: ${tone}
+Brand voice: clear, calm, protective, direct, warm without slang, realistic optimism. Help users feel in control rather than sold to.
+
+Task: Write ${tstr}.
+
+BYTE COUNTING RULE (critical): CJK characters = 2 bytes each. ASCII letters, numbers, spaces, punctuation = 1 byte each. Count carefully — every copy MUST be within its byte limit.
+${scoreGuide}
+
+COPYWRITING RULES:
+- Headlines: clear, benefit-first, easy to understand. No filler.
+- Descriptions: practical daily money benefit + natural CTA. Specific to the selected job-to-be-done, not generic.
+- Write about the selected concrete product functions only. Do not turn abstract jobs like control or tranquilidad into standalone claims; connect them to a real action such as paying utilities, topping up airtime, checking balance, transferring money, paying services, adding cash, withdrawing cash, reviewing transactions, or scheduling recurring payments.
+- Supported __PRODUCT_NAME__ function facts: water/electricity/gas bill pay; phone airtime top-ups; contactless store payments; pay from home; internet/phone/TV providers; tuition/school payments; taxes/government fees; catalog sales payments; insurance/tolls/transport payments; 377+ bill-pay services in 42 categories; transfers to any account; 28,531+ cash-in points; 6,984+ cash-out points; balance checks; transaction history; recurring payments; cashback on purchases; $100 welcome cashback where campaign terms apply; 24/7 support; backed by Clip.
+- Do NOT invent licenses, regulated status, bank partnerships, card-network relationships, security certifications, encryption standards, fee advantages, exchange-rate advantages, arrival speed, approval likelihood, savings guarantees, cashback amounts beyond supplied facts, rewards beyond supplied facts, investment returns, risk-free claims, or guaranteed approval.
+- Local market context: ${hints}
+- Do NOT use exclamation marks.
+- Every copy must be unique and varied — no repetition.
+- Use natural Mexican Spanish only, with simple words a Mexican Android user would understand.
+- Never present roadmap-only items as live features. If evidence is missing, keep it as a neutral scenario rather than a product claim.
+
+Respond ONLY with valid JSON, no markdown, no preamble:
+{"short":["...","..."],"long":["...","..."]}
+Include only the keys needed for the requested type(s).`;
+}
+
+// ── Generate ──────────────────────────────────────────────────────
+async function generate() {
+  const btn  = document.getElementById('gen-btn');
+  const res  = document.getElementById('results');
+  const empty = document.getElementById('right-empty');
+  const qty  = Math.max(1, Math.min(50, parseInt(document.getElementById('qty').value) || 5));
+  const regions  = [...S.region];
+  const lang     = [...S.lang][0];
+  const device   = [...S.device][0];
+  const cats     = [...S.cat];
+  const benefits = [...S.benefit];
+  const type     = [...S.type][0];
+  const tone     = [...S.tone][0];
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"><span></span><span></span><span></span></div> Generating...';
+  empty.style.display = 'none';
+  res.style.display = 'block';
+  res.innerHTML = '';
+  bank = [];
+
+  try {
+    let html = '';
+    let idx  = 0;
+    const rLabel = regions.join(' \u00b7 ');
+    const lLabel = { 'es-MX':'ES-MX', es:'ES-MX' }[lang] || 'ES-MX';
+
+    const batches = await Promise.all(cats.map(async cat => {
+      const raw = await callAPI(buildPrompt(regions, lang, device, cat, benefits, type, tone, qty, getTargets()), { json: true });
+      return { cat, parsed: parseCopyJson(raw, type) };
+    }));
+
+    const total = batches.reduce((sum, b) => sum + (b.parsed.short?.length || 0) + (b.parsed.long?.length || 0), 0);
+    html += `<div class="batch-meta"><i class="ti ti-check-circle"></i> ${total} copies \u2014 ${cats.length} categories \u00b7 ${rLabel} \u00b7 ${lLabel}</div>`;
+
+    batches.forEach(batch => {
+      const parsed = batch.parsed;
+      if (parsed.short?.length) {
+        html += `<div class="res-section"><div class="res-label">${batch.cat} · Short headlines (\u226425 bytes)</div><div class="cards-grid">`;
+        parsed.short.forEach(t => {
+          bank.push({ text:t, type:'short', region:rLabel, lang:lLabel, cat:batch.cat, device, tone, regions, langCode:lang, benefits });
+          html += card(t, 'short', rLabel, lLabel, idx++, benefits, lang, batch.cat);
+        });
+        html += '</div></div>';
+      }
+      if (parsed.long?.length) {
+        html += `<div class="res-section"><div class="res-label">${batch.cat} · Long descriptions (\u226475 bytes)</div><div class="cards-grid">`;
+        parsed.long.forEach(t => {
+          bank.push({ text:t, type:'long', region:rLabel, lang:lLabel, cat:batch.cat, device, tone, regions, langCode:lang, benefits });
+          html += card(t, 'long', rLabel, lLabel, idx++, benefits, lang, batch.cat);
+        });
+        html += '</div></div>';
+      }
+    });
+
+    if (bank.length > 0) {
+      const hasShort = bank.some(b => b.type === 'short');
+      const hasLong  = bank.some(b => b.type === 'long');
+      html += `<div class="export-row">
+        ${hasShort ? '<button class="exp-btn" onclick="exportXlsx(\'short\')"><i class="ti ti-table-export"></i> 短文案 Excel</button>' : ''}
+        ${hasLong  ? '<button class="exp-btn" onclick="exportXlsx(\'long\')"><i class="ti ti-table-export"></i> 长文案 Excel</button>' : ''}
+        ${hasShort && hasLong ? '<button class="exp-btn" onclick="exportXlsx(\'both\')"><i class="ti ti-table-export"></i> 长+短 Excel</button>' : ''}
+        <button class="exp-btn" onclick="copyAll()"><i class="ti ti-copy"></i> Copy all</button>
+      </div>`;
+    }
+    res.innerHTML = html;
+    document.getElementById('filter-bar').style.display = 'block';
+    initSliders();
+    // Auto-translate non-zh non-en languages in background
+    if (!['zh-TW','zh-CN','en'].includes(lang)) {
+      autoTranslateAll(lang);
+    }
+  } catch(err) {
+    res.innerHTML = `<div class="err"><i class="ti ti-alert-circle"></i> ${err.message}</div>`;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-sparkles"></i> Generate __PRODUCT_NAME__ copy';
+}
+
+async function regenOne(idx) {
+  const el = document.getElementById(`cd-${idx}`);
+  if (!el || !bank[idx]) return;
+  const b = bank[idx];
+  el.style.opacity = '.4';
+  try {
+    const p   = buildPrompt(b.regions, b.langCode, b.device, b.cat, b.benefits, b.type, b.tone, 1, getTargets())
+      + ' Generate exactly 1 fresh alternative, different from any copy already produced.';
+    const raw = await callAPI(p, { json: true });
+    const parsed = parseCopyJson(raw, b.type);
+    const texts  = parsed.short || parsed.long || [];
+    if (texts[0]) {
+      bank[idx] = { ...b, text: texts[0] };
+      const tmp = document.createElement('div');
+      tmp.innerHTML = card(texts[0], b.type, b.region, b.lang, idx, b.benefits, b.langCode, b.cat);
+      el.replaceWith(tmp.firstChild);
+      return;
+    }
+  } catch(e) {}
+  el.style.opacity = '1';
+}
+
+function copyAll() {
+  navigator.clipboard.writeText(bank.map(b => b.text).join('\n'));
+}
+
+function productIntakePrompt(productKey) {
+  const base = productKey === '__PRODUCT_SLUG__'
+    ? '请基于当前 __PRODUCT_NAME__ 金融支付 app 广告文案工具，开一个新的旁系产品广告文案生成工具。'
+    : '请基于当前广告文案工具，开一个新的旁系产品广告文案生成工具。';
+  return `${base}
+
+请先不要直接改代码。第一步请向我弹出并收集下面的产品接入需求表；资料不完整时请标明缺口和会影响的生成质量。
+
+产品接入需求表：
+1. 产品名：
+2. 产品类型：
+3. 产品链接 / App Store / Google Play / 官网：
+4. 投放国家 / 地区：
+5. 产品语言 / 广告语言：
+6. 投放人群：
+7. 投放版位 / 广告平台：
+8. 核心功能：
+9. 核心卖点：
+10. 用户痛点 / 使用场景：
+11. 必须使用的文案信息：
+12. 禁止使用或需要谨慎使用的表述：
+13. 合规限制 / 资质限制：
+14. 品牌语气：
+15. 竞品或参考广告：
+16. 可上传给 AI 参考的品牌书、产品文档、功能文档、素材、截图：
+17. 希望保留当前工具的哪些能力：
+18. 希望新增或删减的能力：
+
+拿到资料后，请把产品信息转化为默认选项、文案提示词、评分偏好、示例文案、UI 配色和页面视觉语气；不要覆盖用户已保存的 API Key、模型池、云账号或线上数据。`;
+}
+
+function uiCalibrationPrompt(productKey) {
+  const sample = productKey === '__PRODUCT_SLUG__' ? '__PRODUCT_NAME__ 金融支付工具' : '当前广告文案工具';
+  return `请根据我提供的品牌书、产品文档、产品链接和截图，校准这个${sample}的新产品分支 UI。
+
+要求：
+1. 提取品牌主色、辅助色、按钮色、警示色和中性色，并说明依据。
+2. 调整页面顶部品牌区、主要按钮、标签、状态提示、结果卡片和空状态的配色。
+3. 默认选项、字段命名、示例文案必须贴合该产品的投放国家、语言、用户场景和合规边界。
+4. 不要只换颜色；需要同步调整视觉密度、文案语气和默认生成策略。
+5. 不要修改或清空任何用户已经保存的 API Key、模型池、云账号、API Token 或历史配置。`;
+}
+
+async function copyProductIntakePrompt(productKey) {
+  await navigator.clipboard.writeText(productIntakePrompt(productKey)).catch(() => {});
+  const el = document.getElementById('product-intake-status');
+  if (el) {
+    el.textContent = '已复制接入需求表';
+    setTimeout(() => { el.textContent = ''; }, 2200);
+  }
+}
+
+async function copyUiCalibrationPrompt(productKey) {
+  await navigator.clipboard.writeText(uiCalibrationPrompt(productKey)).catch(() => {});
+  const el = document.getElementById('product-intake-status');
+  if (el) {
+    el.textContent = '已复制 UI 校准指令';
+    setTimeout(() => { el.textContent = ''; }, 2200);
+  }
+}
+
+// ── Filter sliders ────────────────────────────────────────────────
+let filterState = { hook:[0,10], rel:[0,10], cta:[0,10], space:[0,10], total:[0,10] };
+let selectedIdx = new Set();
+
+function initSliders() {
+  selectedIdx.clear();
+  updateBatchBar();
+  document.querySelectorAll('.dual-range-wrap').forEach(wrap => {
+    const key  = wrap.dataset.key;
+    const minR = wrap.querySelector('.dr-min');
+    const maxR = wrap.querySelector('.dr-max');
+    const fill = wrap.querySelector('.dual-fill');
+    minR.value = 0; maxR.value = 10;
+    filterState[key] = [0, 10];
+    updateFill(wrap, fill, minR, maxR);
+    const onChange = () => {
+      let lo = parseInt(minR.value), hi = parseInt(maxR.value);
+      if (lo > hi) { if (this === minR) lo = hi; else hi = lo; }
+      minR.value = lo; maxR.value = hi;
+      filterState[key] = [lo, hi];
+      updateFill(wrap, fill, minR, maxR);
+      document.getElementById('fv-' + key).textContent = lo + '–' + hi;
+      applyFilters();
+    };
+    minR.addEventListener('input', onChange);
+    maxR.addEventListener('input', onChange);
+  });
+  applyFilters();
+}
+
+function updateFill(wrap, fill, minR, maxR) {
+  const lo = (parseInt(minR.value) / 10) * 100;
+  const hi = (parseInt(maxR.value) / 10) * 100;
+  fill.style.left  = lo + '%';
+  fill.style.width = (hi - lo) + '%';
+}
+
+function applyFilters() {
+  const cards = document.querySelectorAll('.copy-card');
+  let visible = 0;
+  cards.forEach(el => {
+    const idx   = parseInt(el.dataset.idx);
+    const pass  = ['hook','rel','cta','space','total'].every(k => {
+      const v = parseInt(el.dataset[k === 'rel' ? 'rel' : k === 'cta' ? 'cta' : k === 'space' ? 'space' : k === 'total' ? 'total' : k]);
+      return v >= filterState[k][0] && v <= filterState[k][1];
+    });
+    el.classList.toggle('filtered-out', !pass);
+    if (!pass && selectedIdx.has(idx)) { selectedIdx.delete(idx); el.querySelector('.card-check').checked = false; el.classList.remove('selected'); }
+    if (pass) visible++;
+  });
+  document.getElementById('filter-count').textContent = `${visible} / ${bank.length} 条可见`;
+  updateBatchBar();
+}
+
+function resetFilters() {
+  filterState = { hook:[0,10], rel:[0,10], cta:[0,10], space:[0,10], total:[0,10] };
+  document.querySelectorAll('.dual-range-wrap').forEach(wrap => {
+    wrap.querySelector('.dr-min').value = 0;
+    wrap.querySelector('.dr-max').value = 10;
+    updateFill(wrap, wrap.querySelector('.dual-fill'), wrap.querySelector('.dr-min'), wrap.querySelector('.dr-max'));
+    document.getElementById('fv-' + wrap.dataset.key).textContent = '0–10';
+  });
+  applyFilters();
+}
+
+// ── Multi-select ──────────────────────────────────────────────────
+function onCardCheck(idx, checked) {
+  if (checked) selectedIdx.add(idx); else selectedIdx.delete(idx);
+  const el = document.getElementById('cd-' + idx);
+  if (el) el.classList.toggle('selected', checked);
+  updateBatchBar();
+}
+
+function selectAllFiltered() {
+  document.querySelectorAll('.copy-card:not(.filtered-out)').forEach(el => {
+    const idx = parseInt(el.dataset.idx);
+    selectedIdx.add(idx);
+    el.classList.add('selected');
+    el.querySelector('.card-check').checked = true;
+  });
+  updateBatchBar();
+}
+
+function clearSelection() {
+  selectedIdx.clear();
+  document.querySelectorAll('.copy-card').forEach(el => {
+    el.classList.remove('selected');
+    el.querySelector('.card-check').checked = false;
+  });
+  updateBatchBar();
+}
+
+function updateBatchBar() {
+  const bar = document.getElementById('batch-actions');
+  const cnt = document.getElementById('sel-count');
+  if (selectedIdx.size > 0) {
+    bar.style.display = 'flex';
+    cnt.textContent   = `已选 ${selectedIdx.size} 条`;
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+// ── Excel export — SheetJS multi-sheet ───────────────────────────
+function makeFilename(rows, typeSlug, prefix) {
+  const sample  = rows[0];
+  const today   = new Date();
+  const dateStr = today.getFullYear() + ('0'+(today.getMonth()+1)).slice(-2) + ('0'+today.getDate()).slice(-2);
+  const catSlug = (sample.cat || '__PRODUCT_NAME__').replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g,'-').replace(/-+/g,'-').slice(0,16);
+  const bnfSlug = (sample.benefits||[]).slice(0,2).map(b=>b.split(/[\s,]/)[0]).join('-').replace(/[^a-zA-Z0-9\u4e00-\u9fa5-]/g,'').slice(0,16) || 'copy';
+  return [(prefix||''), typeSlug, catSlug, bnfSlug, dateStr].filter(Boolean).join('_') + '.xlsx';
+}
+
+// Build an array-of-arrays for one sheet
+function buildSheetData(rows) {
+  const hasT = rows.some(r => r.translation);
+  const header = ['Category','Type','Copy', ...(hasT?['中文翻译']:[]), 'Bytes','Limit','Region','Language','Hook','Relevance','CTA','Space use','Appeal score'];
+  const data = [header];
+  rows.forEach(r => {
+    const sc  = scoreText(r.text, r.type, r.benefits||[]);
+    const max = r.type==='short'?25:75;
+    data.push([
+      r.cat || '',
+      r.type==='short'?'Short':'Long',
+      r.text,
+      ...(hasT?[r.translation||'']:[]),
+      blen(r.text), max, r.region, r.lang,
+      sc.hook, sc.rel, sc.cta, sc.space, sc.total
+    ]);
+  });
+  return data;
+}
+
+// Sheet name: region · lang (sanitized, max 31 chars for Excel)
+function sheetName(region, lang) {
+  return (region + ' ' + lang).replace(/[:\\\/\?\*\[\]]/g,'').slice(0,31);
+}
+
+function exportXlsx(mode) {
+  const rows = bank.filter(b => mode==='both' || b.type===mode);
+  if (!rows.length) return;
+
+  const wb = XLSX.utils.book_new();
+
+  // Group by region · lang
+  const groups = {};
+  rows.forEach(r => {
+    // Each region is stored as "US · AU" etc — split and create one sheet per region+lang combo
+    const regions = r.regions && r.regions.length ? r.regions : [r.region];
+    regions.forEach(reg => {
+      const key = reg + '||' + r.langCode;
+      if (!groups[key]) groups[key] = { region: reg, lang: r.lang, langCode: r.langCode, rows: [] };
+      groups[key].rows.push(r);
+    });
+  });
+
+  // If only one group, skip grouping and just output one sheet named after type
+  const keys = Object.keys(groups);
+  if (keys.length <= 1) {
+    const data = buildSheetData(rows);
+    const ws   = XLSX.utils.aoa_to_sheet(data);
+    styleSheet(ws, data);
+    XLSX.utils.book_append_sheet(wb, ws, mode==='short'?'Short Headlines':mode==='long'?'Long Descriptions':'All Copy');
+  } else {
+    keys.forEach(key => {
+      const g    = groups[key];
+      const data = buildSheetData(g.rows);
+      const ws   = XLSX.utils.aoa_to_sheet(data);
+      styleSheet(ws, data);
+      XLSX.utils.book_append_sheet(wb, ws, sheetName(g.region, g.lang));
+    });
+    // Also add a summary sheet with everything
+    const allData = buildSheetData(rows);
+    const allWs   = XLSX.utils.aoa_to_sheet(allData);
+    styleSheet(allWs, allData);
+    XLSX.utils.book_append_sheet(wb, allWs, 'All');
+  }
+
+  XLSX.writeFile(wb, makeFilename(rows, mode==='short'?'short':mode==='long'?'long':'all'));
+}
+
+function batchExport(mode) {
+  const rows = bank.filter((b,i) => selectedIdx.has(i) && (mode==='both' || b.type===mode));
+  if (!rows.length) { alert('没有符合条件的选中项'); return; }
+
+  const wb = XLSX.utils.book_new();
+
+  const groups = {};
+  rows.forEach(r => {
+    const regions = r.regions && r.regions.length ? r.regions : [r.region];
+    regions.forEach(reg => {
+      const key = reg + '||' + r.langCode;
+      if (!groups[key]) groups[key] = { region: reg, lang: r.lang, langCode: r.langCode, rows: [] };
+      groups[key].rows.push(r);
+    });
+  });
+
+  const keys = Object.keys(groups);
+  if (keys.length <= 1) {
+    const data = buildSheetData(rows);
+    const ws   = XLSX.utils.aoa_to_sheet(data);
+    styleSheet(ws, data);
+    XLSX.utils.book_append_sheet(wb, ws, 'Selected');
+  } else {
+    keys.forEach(key => {
+      const g    = groups[key];
+      const data = buildSheetData(g.rows);
+      const ws   = XLSX.utils.aoa_to_sheet(data);
+      styleSheet(ws, data);
+      XLSX.utils.book_append_sheet(wb, ws, sheetName(g.region, g.lang));
+    });
+    const allData = buildSheetData(rows);
+    const allWs   = XLSX.utils.aoa_to_sheet(allData);
+    styleSheet(allWs, allData);
+    XLSX.utils.book_append_sheet(wb, allWs, 'All Selected');
+  }
+
+  XLSX.writeFile(wb, makeFilename(rows, mode==='both'?'all':mode, 'selected'));
+}
+
+// Apply column widths and basic header style
+function styleSheet(ws, data) {
+  if (!data.length) return;
+  const cols = data[0].map((_, ci) => {
+    const maxW = data.reduce((m, row) => Math.max(m, String(row[ci]||'').length), 10);
+    return { wch: Math.min(maxW + 2, 60) };
+  });
+  ws['!cols'] = cols;
+}
+
+// ── Batch regenerate (selected) ───────────────────────────────────
+async function batchRegen() {
+  const idxList = [...selectedIdx];
+  if (!idxList.length) return;
+  if (!confirm(`将重新生成选中的 ${idxList.length} 条文案，确认？`)) return;
+  clearSelection();
+  for (const idx of idxList) {
+    await regenOne(idx);
+    await new Promise(r => setTimeout(r, 300));
+  }
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

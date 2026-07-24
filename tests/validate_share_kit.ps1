@@ -12,6 +12,14 @@ $required = @(
   "templates\product\product.json.template",
   "templates\product\brief.md.template",
   "templates\product\TASK.md.template",
+  "templates\full-tool-source\README.md",
+  "templates\full-tool-source\public\index.html",
+  "templates\full-tool-source\src\worker_api_template.js",
+  "templates\full-tool-source\scripts\deploy.ps1",
+  "templates\full-tool-source\scripts\deploy_via_api.py",
+  "templates\full-tool-source\scripts\build_worker.mjs",
+  "templates\full-tool-source\package.json",
+  "templates\full-tool-source\wrangler.jsonc",
   "docs\distribution_manifest.md",
   "docs\FEATURE_MANIFEST.md",
   "docs\feature_registry.md",
@@ -39,11 +47,26 @@ foreach ($name in $forbiddenDirs) {
 }
 
 $forbiddenFiles = Get-ChildItem -Path $root -Force -Recurse -File | Where-Object {
-  $_.Name -match 'worker_app_secret|cloudflare_token|\.env|\.pem$|\.key$' -or
+  $relative = $_.FullName.Substring($root.Length).TrimStart('\')
+  $isAllowedTemplateTokenScript = $relative -in @(
+    "templates\full-tool-source\scripts\prompt_save_cloudflare_token.ps1",
+    "templates\full-tool-source\scripts\save_cloudflare_token.ps1"
+  )
+  ((-not $isAllowedTemplateTokenScript) -and $_.Name -match 'worker_app_secret|cloudflare_token|\.env|\.pem$|\.key$') -or
   $_.FullName -match '\\products\\[^\\]+\\source\\'
 }
 if ($forbiddenFiles) {
   throw "Forbidden files found: $($forbiddenFiles.FullName -join ', ')"
+}
+
+$baselineText = Get-Content -LiteralPath (Join-Path $root "templates\full-tool-source\README.md") -Raw -Encoding UTF8
+foreach ($term in @("Per-user BYOK", "Model discovery", "model-pool", "External AI API", "Score control", "Do not replace this with a landing page")) {
+  if ($baselineText -notlike "*$term*") { throw "Baseline source README missing term: $term" }
+}
+
+$baselineHtml = Get-Content -LiteralPath (Join-Path $root "templates\full-tool-source\public\index.html") -Raw -Encoding UTF8
+foreach ($term in @("key-mgr-btn", "modal-pages", "api-command-box", "provider-pool", "copyProductIntakePrompt")) {
+  if ($baselineHtml -notlike "*$term*") { throw "Baseline HTML missing capability marker: $term" }
 }
 
 Write-Host "Share-kit validation passed."

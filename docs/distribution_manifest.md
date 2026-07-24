@@ -5,6 +5,7 @@ This repository contains only reusable capabilities approved for distribution in
 ## Included Core Standards
 
 - Complete baseline tool capability requirements.
+- Complete reusable source baseline under `templates/full-tool-source`.
 - UI structure preservation and product-brand calibration rules.
 - Cloud account logout behavior.
 - Shared account/profile store with product-local provider pools.
@@ -17,6 +18,7 @@ This repository contains only reusable capabilities approved for distribution in
 - `score-control`: minimum score targets, optional quality goals, candidate ranking, throughput-aware defaults, adaptive retry guidance.
 - `provider-pool`: user-owned provider profiles, product-local model pools, agent-sticky assignment concepts.
 - `baseline-tool-spec`: required account, model, API, scoring, batch, export, persistence, and UI-structure rules for every generated product tool.
+- `full-tool-source`: complete reusable GUI, Worker API, account/provider/model-pool flows, score control, batch generation, export, and deployment scripts with product placeholders.
 
 ## Excluded
 

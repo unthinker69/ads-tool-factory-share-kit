@@ -16,7 +16,7 @@ https://github.com/unthinker69/ads-tool-factory-share-kit
 
 第一步不要直接开发。请先弹出一份产品接入需求表，要求我提供产品名、投放国家、产品语言、目标人群、投放版位、产品链接、核心功能、品牌书、产品文档、功能文档、合规限制、参考素材和期望 UI 风格。
 
-拿到资料后，请基于品牌书、产品文档和产品链接，定制这个工具的默认参数、广告文案策略、评分规则、UI 配色和界面风格。必须保留 docs/BASELINE_TOOL_SPEC.md 中列出的账号、模型管理、模型池、外部 API、评分控制、批量生成、复制导出和线上部署安全能力。
+拿到资料后，请从 templates/full-tool-source 复制完整源码基线来创建产品工具，不要从零写 GUI。基于品牌书、产品文档和产品链接，定制这个工具的默认参数、广告文案策略、评分规则、UI 配色和界面风格。必须保留 docs/BASELINE_TOOL_SPEC.md 中列出的账号、模型管理、模型池、外部 API、评分控制、批量生成、复制导出和线上部署安全能力。
 
 UI 必须保留现有工具的展示形式和设计结构：顶部品牌栏、左侧配置面板、右侧结果区、Key/模型管理面板、模型池管理、API 调用区和评分结果卡片都要保留。只允许根据产品信息调整配色、默认选项、文案语气，以及左上角品牌展示部分。所有产品事实必须来自我提供或可验证的资料，不要编造。
 ```
@@ -31,6 +31,7 @@ UI 必须保留现有工具的展示形式和设计结构：顶部品牌栏、�
 
 ## Core Capabilities
 
+- Full source baseline: `templates/full-tool-source` 内置完整前端 GUI、Worker API、Key/模型管理、模型池、评分控制、API 调用和部署脚本。
 - Per-user BYOK: 每个使用者配置自己的模型 key。
 - Provider pool: 支持多模型池和 agent-sticky 分配。
 - External AI API: 通过 OpenAPI/schema 让其他 AI 工具可调用。

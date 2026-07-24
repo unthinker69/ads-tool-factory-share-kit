@@ -1,0 +1,17 @@
+﻿{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "__WORKER_NAME__",
+  "main": "dist/worker.js",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
+
+
+

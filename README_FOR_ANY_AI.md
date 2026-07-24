@@ -24,6 +24,7 @@ Before making changes, read:
 - Do not invent claims for regulated categories such as finance, health, legal, or credit.
 - Treat advertising claims as evidence-bound. If product facts, certification, pricing, payout, delivery time, or compliance evidence is missing, keep copy generic and mark the gap.
 - At the start of every new product branch, present `docs/PRODUCT_INTAKE_FORM.md` to collect product, market, placement, audience, documentation, brand book, and UI evidence before implementation.
+- Start product implementation from `templates/full-tool-source` or the `products/<slug>/source` directory created by `scripts/new_product.ps1`. Do not rebuild the GUI from scratch.
 - Use the brand book, product documents, product links, screenshots, and approved examples to customize UI design, palette, default copy, scoring signals, and API examples.
 - Preserve every required baseline capability listed in `docs/BASELINE_TOOL_SPEC.md`. Do not ship a simplified product page that drops account login, per-user BYOK, provider profile management, model discovery, model pool, external AI API, personal API token flow, score control, batch generation, copy/export, or persistence-safe deployment.
 - Preserve the existing tool UI structure. Product work may adjust color tokens, defaults, left-top brand display, product language, examples, and product-specific options, but must not replace the tool with a landing page, simple form, or unrelated layout.
@@ -33,12 +34,13 @@ Before making changes, read:
 1. Create or inspect the product branch under `products/<slug>/`.
 2. Ask for the product intake form before building.
 3. Confirm that the product branch includes all required capabilities in `docs/BASELINE_TOOL_SPEC.md`.
-4. Build product-specific configuration, prompt rules, UI defaults, API schema, scoring guardrails, and release checks.
+4. Use the generated `products/<slug>/source` full-tool baseline as the implementation base.
 5. Derive UI color tokens, top-left brand display, examples, and default states from the provided brand/product materials while preserving the baseline layout.
-6. Reuse only the modules that are listed in `docs/distribution_manifest.md`.
-7. Record local branch optimizations in `docs/branch_optimizations.md`.
-8. If the local owner explicitly approves distribution within their own factory, add the item to `docs/distribution_queue.md`.
-9. Run the release checklist and report verification.
+6. Build product-specific configuration, prompt rules, UI defaults, API schema, scoring guardrails, and release checks.
+7. Reuse only the modules that are listed in `docs/distribution_manifest.md`.
+8. Record local branch optimizations in `docs/branch_optimizations.md`.
+9. If the local owner explicitly approves distribution within their own factory, add the item to `docs/distribution_queue.md`.
+10. Run the release checklist and report verification.
 
 ## Marketing Quality Standard
 

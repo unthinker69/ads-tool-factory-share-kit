@@ -20,13 +20,13 @@ The update script uses `id`, `tags`, and `files` to detect semantic overlap with
 
 - title: Complete product tool baseline
 - tags: baseline, byok, account, provider-profile, model-discovery, model-pool, external-ai, api-token, score-control, batch-generation, export, persistence
-- files: docs\BASELINE_TOOL_SPEC.md, README_FOR_ANY_AI.md, docs\RELEASE_CHECKLIST.md, templates\product\TASK.md.template, README.md
+- files: docs\BASELINE_TOOL_SPEC.md, templates\full-tool-source\README.md, templates\full-tool-source\public\index.html, templates\full-tool-source\src\worker_api_template.js, README_FOR_ANY_AI.md, docs\RELEASE_CHECKLIST.md, templates\product\TASK.md.template, README.md
 
 ## ui-structure-preservation
 
 - title: Preserve current tool UI structure
 - tags: ui-structure, layout, branding, color, key-management, model-pool, results-panel
-- files: docs\BASELINE_TOOL_SPEC.md, README_FOR_ANY_AI.md, docs\RELEASE_CHECKLIST.md, templates\product\TASK.md.template, README.md
+- files: docs\BASELINE_TOOL_SPEC.md, templates\full-tool-source\README.md, templates\full-tool-source\public\index.html, README_FOR_ANY_AI.md, docs\RELEASE_CHECKLIST.md, templates\product\TASK.md.template, README.md
 
 ## external-ai-api-guidance
 

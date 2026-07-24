@@ -28,6 +28,9 @@ Do not start implementation immediately. First present the product intake form a
 Baseline requirement:
 The generated product tool must include every required capability in docs\BASELINE_TOOL_SPEC.md: per-user BYOK, provider profile management, connection parsing, model discovery, product-local model pool, concurrent generation, agent-sticky assignment, cloud account/API token flow, external AI API, quantity control, score control, scoring visibility, batch category generation, copy/export workflow, and persistence-safe deployment. If any capability is intentionally excluded, stop and ask the owner for explicit approval before implementation.
 
+Source requirement:
+Use {{factory_root}}\products\{{slug}}\source as the implementation base. This source is copied from templates\full-tool-source and already contains the complete GUI, Worker API, provider/account/model-pool flows, scoring, batch generation, and deployment scripts. Do not rebuild the interface from scratch.
+
 UI requirement:
 Preserve the current tool's UI display form and design structure. Keep the top bar, left configuration panel, right results area, Key/model management surface, model-pool controls, external API area, and scored result cards. Only adjust product color tokens, default options, copy, examples, and the top-left brand display based on the provided product and brand materials.
 

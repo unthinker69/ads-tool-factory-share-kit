@@ -13,3 +13,5 @@ wrangler.jsonc
 products/*/source/
 products/*/.secrets/
 
+!templates/full-tool-source/wrangler.jsonc
+!templates/full-tool-source/scripts/*token*.ps1

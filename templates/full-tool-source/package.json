@@ -1,0 +1,13 @@
+﻿{
+    "name":  "__WORKER_NAME__",
+    "private":  true,
+    "scripts":  {
+                    "dev":  "node scripts/build_worker.mjs \u0026\u0026 wrangler dev",
+                    "deploy":  "powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1 -SkipCopy",
+                    "build":  "node scripts/build_worker.mjs"
+                },
+    "devDependencies":  {
+                            "wrangler":  "^4.106.0"
+                        }
+}
+
