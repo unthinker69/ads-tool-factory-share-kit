@@ -1,0 +1,25 @@
+{
+  "slug": "{{slug}}",
+  "display_name": "{{display_name}}",
+  "industry": "{{industry}}",
+  "status": "draft",
+  "based_on": "{{based_on}}",
+  "source_project": "",
+  "production_url": "",
+  "cloudflare_worker": "",
+  "api_contract": "../../core/worker_contract.md",
+  "shared_modules": [
+    "score-control",
+    "provider-pool"
+  ],
+  "distribution_policy": {
+    "branch_optimizations_default": "local_only",
+    "distribution_requires_explicit_owner_approval": true
+  },
+  "data_stability_notes": [
+    "Keep per-user BYOK.",
+    "Do not share provider keys across users.",
+    "Do not break saved model profiles or provider pool data."
+  ]
+}
+

@@ -1,0 +1,15 @@
+.secrets/
+.wrangler/
+dist/
+node_modules/
+.env
+.env.*
+*.log
+*.pem
+*.key
+*token*
+*secret*
+wrangler.jsonc
+products/*/source/
+products/*/.secrets/
+

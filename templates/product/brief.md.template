@@ -1,0 +1,36 @@
+# {{display_name}} Product Branch Brief
+
+## Goal
+
+Build an ad copy generation tool for this product using the factory standards.
+
+## Target Users
+
+To be filled by the owner.
+
+## Product Facts
+
+Only use facts provided by the owner or verified product materials.
+
+## Core Benefits
+
+- To be filled by the owner.
+
+## Default Ad Platform
+
+- Google App Campaign
+
+## Inherited Capabilities
+
+- Per-user API keys
+- Account isolation
+- Provider pool
+- External AI API access
+- Server-side score control
+- Candidate ranking
+- OpenAPI
+
+## Distribution Policy
+
+Optimizations created in this product branch stay local unless the owner explicitly approves distribution.
+

@@ -1,0 +1,32 @@
+# {{display_name}} Product Branch Task
+
+```text
+This is a product branch task in the Ads Tool Factory.
+
+Factory root:
+{{factory_root}}
+
+Product directory:
+{{factory_root}}\products\{{slug}}
+
+Read first:
+1. {{factory_root}}\AGENTS.md
+2. {{factory_root}}\README_FOR_ANY_AI.md
+3. {{factory_root}}\docs\PROMOTION_PROTOCOL.md
+4. {{factory_root}}\docs\RELEASE_CHECKLIST.md
+5. {{factory_root}}\products\{{slug}}\product.json
+6. {{factory_root}}\products\{{slug}}\brief.md
+
+Goal:
+Build an ad copy generation tool for {{display_name}}.
+
+Rules:
+1. Product-specific work should stay under products\{{slug}}.
+2. Branch optimizations are local by default.
+3. Only distribute an optimization when the owner explicitly says to distribute it.
+4. Do not break other product branches.
+5. Do not expose or commit provider API keys, Cloudflare tokens, worker secrets, or KV data.
+6. Do not invent regulated claims.
+7. Run the release checklist before reporting completion.
+```
+
