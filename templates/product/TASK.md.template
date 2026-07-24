@@ -23,10 +23,11 @@ Build a product-specific ad copy generation tool for {{display_name}}.
 Rules:
 1. Product-specific work should stay under products\{{slug}}.
 2. Branch optimizations are local by default.
-3. Only distribute an optimization when the owner explicitly says to distribute it.
-4. Do not break other product branches.
-5. Do not expose or commit provider API keys, Cloudflare tokens, worker secrets, or KV data.
-6. Do not invent product facts, performance claims, pricing claims, certification claims, regulated claims, or platform evidence.
-7. Use performance-marketing language and keep API documentation clear for external AI callers.
-8. Run the release checklist before reporting completion.
+3. Distribution means reuse inside this local factory only. It never means modifying the upstream template repository or another team's factory.
+4. Only distribute an optimization inside this local factory when the owner explicitly says to distribute it.
+5. Do not break other product branches.
+6. Do not expose or commit provider API keys, Cloudflare tokens, worker secrets, or KV data.
+7. Do not invent product facts, performance claims, pricing claims, certification claims, regulated claims, or platform evidence.
+8. Use performance-marketing language and keep API documentation clear for external AI callers.
+9. Run the release checklist before reporting completion.
 ```

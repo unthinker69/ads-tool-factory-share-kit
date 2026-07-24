@@ -1,6 +1,8 @@
-# Selective Distribution Protocol
+# Local Selective Distribution Protocol
 
-Branch optimizations are local by default.
+Branch optimizations are local by default. This protocol only controls inheritance inside the current local factory.
+
+It is not an upstream contribution process. Writing to `docs/distribution_queue.md` does not modify the template repository, another team's factory, or any external deployment.
 
 ## Local First
 
@@ -14,7 +16,7 @@ This record does not allow other branches to inherit it.
 
 ## Explicit Distribution Only
 
-Only when the responsible owner explicitly asks to distribute an optimization may it be added to:
+Only when the responsible owner explicitly asks to distribute an optimization inside the current local factory may it be added to:
 
 ```text
 docs/distribution_queue.md
@@ -26,6 +28,8 @@ Examples of explicit approval:
 - "Let other branches inherit this."
 - "Promote this to core."
 - "Promote this to modules."
+
+These approvals are local. They do not authorize pushing changes to the upstream template repository.
 
 ## Where To Promote
 

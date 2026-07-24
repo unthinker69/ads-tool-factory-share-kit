@@ -45,9 +45,27 @@ D:\MyAdsToolFactory\products\my-product\TASK.md
 
 ## Governance Model
 
-每个团队在自己的环境里创建独立工厂、独立产品分支和独立部署配置。产品分支优化默认是本地能力，不会自动扩散到其他产品。
+每个团队在自己的环境里创建独立工厂、独立产品分支和独立部署配置。产品分支优化默认只在该团队自己的工厂内生效，不会回写到本仓库，也不会影响其他团队。
 
-只有当负责人明确批准时，某个优化才可以进入 `docs/distribution_queue.md`，并被后续产品分支继承。
+`docs/distribution_queue.md` 只管理当前本地工厂内部的继承关系。它不是上游同步机制，也不会把任何改动发送回本仓库。
+
+本仓库是单向发布模板。上游版本只由仓库维护者更新；使用者应在自己的副本或 fork 中工作。
+
+更多说明见：
+
+- `docs/UPSTREAM_POLICY.md`
+- `docs/MAINTAINER_RELEASE_FLOW.md`
+
+## Downstream Updates
+
+当模板发布新版本后，已有本地工厂可以选择导入更新：
+
+```powershell
+cd D:\MyAdsToolFactory
+.\scripts\update_from_template.ps1 -TemplateRoot "D:\ads-tool-factory-share-kit"
+```
+
+导入只更新通用模板层，不覆盖产品分支和本地分发记录。
 
 ## Validation
 

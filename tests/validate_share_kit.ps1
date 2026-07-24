@@ -12,10 +12,14 @@ $required = @(
   "templates\product\brief.md.template",
   "templates\product\TASK.md.template",
   "docs\distribution_manifest.md",
+  "docs\UPSTREAM_POLICY.md",
+  "docs\MAINTAINER_RELEASE_FLOW.md",
   "docs\PROMOTION_PROTOCOL.md",
   "docs\RELEASE_CHECKLIST.md",
   "scripts\init_factory.ps1",
-  "scripts\new_product.ps1"
+  "scripts\new_product.ps1",
+  "scripts\build_release_package.ps1",
+  "scripts\update_from_template.ps1"
 )
 
 $missing = @()
