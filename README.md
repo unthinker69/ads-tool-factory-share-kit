@@ -12,11 +12,13 @@ https://github.com/unthinker69/ads-tool-factory-share-kit
 
 请把它下载、clone 或 fork 到我自己的工作区，然后基于这个模板为我的产品创建一个广告文案生成工具。不要修改原作者仓库；所有改动都只发生在我自己的副本里。
 
-获取仓库后，请先阅读 README_FOR_ANY_AI.md、docs/PRODUCT_INTAKE_FORM.md、docs/PROMOTION_PROTOCOL.md、docs/RELEASE_CHECKLIST.md。
+获取仓库后，请先阅读 README_FOR_ANY_AI.md、docs/BASELINE_TOOL_SPEC.md、docs/PRODUCT_INTAKE_FORM.md、docs/PROMOTION_PROTOCOL.md、docs/RELEASE_CHECKLIST.md。
 
 第一步不要直接开发。请先弹出一份产品接入需求表，要求我提供产品名、投放国家、产品语言、目标人群、投放版位、产品链接、核心功能、品牌书、产品文档、功能文档、合规限制、参考素材和期望 UI 风格。
 
-拿到资料后，请基于品牌书、产品文档和产品链接，定制这个工具的默认参数、广告文案策略、评分规则、UI 配色和界面风格。所有产品事实必须来自我提供或可验证的资料，不要编造。
+拿到资料后，请基于品牌书、产品文档和产品链接，定制这个工具的默认参数、广告文案策略、评分规则、UI 配色和界面风格。必须保留 docs/BASELINE_TOOL_SPEC.md 中列出的账号、模型管理、模型池、外部 API、评分控制、批量生成、复制导出和线上部署安全能力。
+
+UI 必须保留现有工具的展示形式和设计结构：顶部品牌栏、左侧配置面板、右侧结果区、Key/模型管理面板、模型池管理、API 调用区和评分结果卡片都要保留。只允许根据产品信息调整配色、默认选项、文案语气，以及左上角品牌展示部分。所有产品事实必须来自我提供或可验证的资料，不要编造。
 ```
 
 该模板适合用于搭建：
@@ -56,6 +58,7 @@ D:\MyAdsToolFactory\products\my-product\TASK.md
 如果团队使用 Claude、Cursor、Gemini、Kimi、通义或其他 AI coding agent，把下面这些文件作为上下文发给它：
 
 - `README_FOR_ANY_AI.md`
+- `docs/BASELINE_TOOL_SPEC.md`
 - `docs/PRODUCT_INTAKE_FORM.md`
 - `docs/PROMOTION_PROTOCOL.md`
 - `docs/RELEASE_CHECKLIST.md`

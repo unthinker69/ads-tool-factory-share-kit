@@ -6,6 +6,7 @@ $required = @(
   "README_FOR_ANY_AI.md",
   "AGENTS.md",
   "core\worker_contract.md",
+  "docs\BASELINE_TOOL_SPEC.md",
   "modules\score-control\README.md",
   "modules\provider-pool\README.md",
   "templates\product\product.json.template",

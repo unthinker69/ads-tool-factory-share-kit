@@ -1,6 +1,6 @@
 # Worker API 契约
 
-所有产品工具尽量保持这些能力一致，方便外部 AI 调用。
+所有产品工具必须保持这些能力一致，方便外部 AI 调用。完整产品能力以 `docs/BASELINE_TOOL_SPEC.md` 为准；如果某个产品需要排除其中任一能力，必须先取得产品负责人的明确批准，并在发布说明中写出例外原因。
 
 ## 标准接口
 
@@ -25,6 +25,8 @@
 - 浏览器 localStorage key
 - personal API token 格式
 - provider pool 的选择逻辑
+
+Web UI 中存在的账号、BYOK、provider profile、model discovery、model pool、score control、batch generation 和 copy/export 能力，必须在 API schema 或 OpenAPI 中有对应说明或调用路径。不得出现网页端有能力、外部 AI API 无法调用，或 API 文档隐藏关键参数的情况。
 
 
 ## 前端账号会话标准

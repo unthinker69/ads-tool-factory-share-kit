@@ -4,6 +4,8 @@ This repository contains only reusable capabilities approved for distribution in
 
 ## Included Core Standards
 
+- Complete baseline tool capability requirements.
+- UI structure preservation and product-brand calibration rules.
 - Cloud account logout behavior.
 - Shared account/profile store with product-local provider pools.
 - External AI API command panel requirements.
@@ -14,11 +16,12 @@ This repository contains only reusable capabilities approved for distribution in
 
 - `score-control`: minimum score targets, optional quality goals, candidate ranking, throughput-aware defaults, adaptive retry guidance.
 - `provider-pool`: user-owned provider profiles, product-local model pools, agent-sticky assignment concepts.
+- `baseline-tool-spec`: required account, model, API, scoring, batch, export, persistence, and UI-structure rules for every generated product tool.
 
 ## Excluded
 
 - Original private product branches.
-- Product-specific source code.
+- Product-specific source code, claims, assets, or private implementation branches.
 - Worker secrets.
 - Cloudflare tokens.
 - KV namespace values.

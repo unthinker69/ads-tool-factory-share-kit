@@ -82,10 +82,12 @@ Upload any available files:
 
 ## UI Customization Requirements
 
-The tool UI should be customized from the product evidence:
+The tool UI should keep the existing advertising-tool structure and be calibrated from product evidence:
 
 - Extract primary and secondary colors from the brand book, logo, website, or screenshots.
-- Match the product category's expected interface style.
+- Adjust only theme tokens, default states, labels, examples, and the top-left brand display unless the owner explicitly approves a larger interface change.
+- Keep the top bar, left configuration panel, right results area, Key/model management surface, model-pool controls, API call area, and scored result cards.
+- Match the product category's expected interface style through colors, wording, density, and examples, not by replacing the tool layout.
 - Use product-specific default states, labels, examples, and empty states.
 - Avoid decorative colors that conflict with the brand palette.
 - If brand evidence is missing, use a restrained neutral palette and mark the UI as pending brand calibration.

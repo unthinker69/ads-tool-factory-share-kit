@@ -12,17 +12,24 @@ Product directory:
 Read first:
 1. {{factory_root}}\AGENTS.md
 2. {{factory_root}}\README_FOR_ANY_AI.md
-3. {{factory_root}}\docs\PROMOTION_PROTOCOL.md
-4. {{factory_root}}\docs\RELEASE_CHECKLIST.md
-5. {{factory_root}}\docs\PRODUCT_INTAKE_FORM.md
-6. {{factory_root}}\products\{{slug}}\product.json
-7. {{factory_root}}\products\{{slug}}\brief.md
+3. {{factory_root}}\docs\BASELINE_TOOL_SPEC.md
+4. {{factory_root}}\docs\PROMOTION_PROTOCOL.md
+5. {{factory_root}}\docs\RELEASE_CHECKLIST.md
+6. {{factory_root}}\docs\PRODUCT_INTAKE_FORM.md
+7. {{factory_root}}\products\{{slug}}\product.json
+8. {{factory_root}}\products\{{slug}}\brief.md
 
 Goal:
 Build a product-specific ad copy generation tool for {{display_name}}.
 
 First step:
 Do not start implementation immediately. First present the product intake form and ask the owner to provide product name, countries, language, target audience, placements, product links, product documentation, feature documentation, brand book, screenshots, compliance limits, approved claims, prohibited claims, and UI style references.
+
+Baseline requirement:
+The generated product tool must include every required capability in docs\BASELINE_TOOL_SPEC.md: per-user BYOK, provider profile management, connection parsing, model discovery, product-local model pool, concurrent generation, agent-sticky assignment, cloud account/API token flow, external AI API, quantity control, score control, scoring visibility, batch category generation, copy/export workflow, and persistence-safe deployment. If any capability is intentionally excluded, stop and ask the owner for explicit approval before implementation.
+
+UI requirement:
+Preserve the current tool's UI display form and design structure. Keep the top bar, left configuration panel, right results area, Key/model management surface, model-pool controls, external API area, and scored result cards. Only adjust product color tokens, default options, copy, examples, and the top-left brand display based on the provided product and brand materials.
 
 Rules:
 1. Product-specific work should stay under products\{{slug}}.
@@ -33,7 +40,8 @@ Rules:
 6. Do not expose or commit provider API keys, Cloudflare tokens, worker secrets, or KV data.
 7. Do not invent product facts, performance claims, pricing claims, certification claims, regulated claims, or platform evidence.
 8. Use performance-marketing language and keep API documentation clear for external AI callers.
-9. Use provided brand book, product documentation, product links, logos, screenshots, and examples to customize UI colors, layout tone, default states, labels, and examples.
-10. If brand evidence is missing, use a neutral temporary UI and mark it as pending brand calibration.
-11. Run the release checklist before reporting completion.
+9. Do not remove account login, BYOK, provider profile management, model sniffing, model pool, API token generation, external API, score control, batch generation, copy/export, or saved-user-data compatibility.
+10. Use provided brand book, product documentation, product links, logos, screenshots, and examples to customize UI colors, left-top brand display, default states, labels, and examples.
+11. If brand evidence is missing, use a neutral temporary theme while preserving the baseline UI structure, and mark it as pending brand calibration.
+12. Run the release checklist before reporting completion.
 ```

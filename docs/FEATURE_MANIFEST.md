@@ -16,6 +16,18 @@ The update script uses `id`, `tags`, and `files` to detect semantic overlap with
 - tags: provider-pool, agent-id, external-ai, model-routing
 - files: modules\provider-pool\README.md, core\worker_contract.md, README_FOR_ANY_AI.md
 
+## complete-tool-baseline
+
+- title: Complete product tool baseline
+- tags: baseline, byok, account, provider-profile, model-discovery, model-pool, external-ai, api-token, score-control, batch-generation, export, persistence
+- files: docs\BASELINE_TOOL_SPEC.md, README_FOR_ANY_AI.md, docs\RELEASE_CHECKLIST.md, templates\product\TASK.md.template, README.md
+
+## ui-structure-preservation
+
+- title: Preserve current tool UI structure
+- tags: ui-structure, layout, branding, color, key-management, model-pool, results-panel
+- files: docs\BASELINE_TOOL_SPEC.md, README_FOR_ANY_AI.md, docs\RELEASE_CHECKLIST.md, templates\product\TASK.md.template, README.md
+
 ## external-ai-api-guidance
 
 - title: External AI API usage guidance

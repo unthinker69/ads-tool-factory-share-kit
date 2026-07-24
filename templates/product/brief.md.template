@@ -48,13 +48,18 @@ Use `docs/PRODUCT_INTAKE_FORM.md` at the start of this product branch. At minimu
 
 ## Inherited Capabilities
 
-- Per-user API keys
-- Account isolation
-- Provider pool
-- External AI API access
-- Server-side score control
-- Candidate ranking
-- OpenAPI
+- Complete baseline from `docs/BASELINE_TOOL_SPEC.md`
+- Per-user BYOK and account isolation
+- Provider profiles with base URL, model, key, compatibility mode, and connection parsing
+- Model discovery where supported
+- Product-local provider/model pool
+- Concurrent generation and agent-sticky assignment
+- Cloud account and personal API token flow
+- External AI API access with schema/OpenAPI
+- Server-side score control, quality goals, retry history, and candidate ranking
+- Batch category/job generation
+- Copy/export workflow with score metadata
+- Persistence-safe deployment for saved keys, profiles, model pools, account data, and API tokens
 
 ## Distribution Policy
 
@@ -62,12 +67,13 @@ Optimizations created in this product branch stay local unless the owner explici
 
 ## UI Direction
 
-The tool UI must be calibrated from the provided brand book, product links, product documents, logo, screenshots, or creative examples.
+The tool UI must preserve the existing advertising-tool structure and be calibrated from the provided brand book, product links, product documents, logo, screenshots, or creative examples.
 
 If brand materials are provided:
 
 - Extract brand colors and use them as UI tokens.
-- Match product category, tone, and visual maturity.
+- Adjust the top-left brand display, app name, badge, labels, defaults, examples, and empty states.
+- Match product category, tone, and visual maturity without replacing the baseline layout.
 - Use product-specific examples and labels.
 
 If brand materials are missing:
@@ -75,3 +81,5 @@ If brand materials are missing:
 - Use a restrained neutral palette.
 - Mark UI palette as pending brand calibration.
 - Ask again for brand book, screenshots, or product link before final visual delivery.
+
+Do not remove the top bar, left configuration panel, right results area, Key/model management surface, model-pool controls, API call area, or scored result cards unless the owner explicitly approves that exception.
