@@ -12,6 +12,8 @@ $required = @(
   "templates\product\brief.md.template",
   "templates\product\TASK.md.template",
   "docs\distribution_manifest.md",
+  "docs\FEATURE_MANIFEST.md",
+  "docs\feature_registry.md",
   "docs\UPSTREAM_POLICY.md",
   "docs\MAINTAINER_RELEASE_FLOW.md",
   "docs\PROMOTION_PROTOCOL.md",

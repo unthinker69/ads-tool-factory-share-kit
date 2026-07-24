@@ -42,3 +42,12 @@ Downstream update scripts must preserve:
 - `docs/distribution_queue.md`
 - local deployment configuration
 - local credentials and runtime state
+
+If a template update overlaps a downstream file that may have local edits, the update flow must not silently overwrite it. It must support at least these choices:
+
+- replace with the template version
+- skip and keep the local version
+- keep both versions for manual review
+- report only without changing files
+
+Overlap is not limited to identical file paths. Template releases list reusable features in `docs/FEATURE_MANIFEST.md`; downstream teams can record their own local capabilities in `docs/feature_registry.md`. If feature IDs or tags overlap, the update flow treats it as a semantic conflict even when the affected files are different.

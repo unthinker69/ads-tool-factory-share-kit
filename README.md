@@ -65,7 +65,26 @@ cd D:\MyAdsToolFactory
 .\scripts\update_from_template.ps1 -TemplateRoot "D:\ads-tool-factory-share-kit"
 ```
 
-导入只更新通用模板层，不覆盖产品分支和本地分发记录。
+导入只更新通用模板层，不覆盖产品分支和本地分发记录。遇到本地团队已经改过的同名文件时，脚本会提示选择：
+
+- replace: 使用模板新版本替换本地文件
+- skip: 保留本地文件
+- keep-both: 同时保留本地文件，并把模板版本保存为 `.template-<timestamp>` 候选文件
+- report: 只生成冲突报告，不改文件
+
+如果只想先看会发生什么：
+
+```powershell
+.\scripts\update_from_template.ps1 -TemplateRoot "D:\ads-tool-factory-share-kit" -Mode report
+```
+
+对于功能相似但文件不同的情况，也可以提前登记到：
+
+```text
+docs\feature_registry.md
+```
+
+模板更新会对比 `docs\FEATURE_MANIFEST.md` 和本地 `docs\feature_registry.md` 的 feature id / tags。比如双方都涉及 `ui-theme,color`，即使不是同一个文件，也会进入人工选择流程。
 
 ## Validation
 
