@@ -4,12 +4,15 @@
 
 ## Fastest Way To Use
 
-把下面这段话直接粘贴给你的 AI coding agent：
+把下面这段话直接粘贴给任意 AI coding agent。它会先从 GitHub 获取模板，再向你弹出产品接入需求表，最后基于你的产品资料生成你自己的广告文案工具。
 
 ```text
-请基于 Ads Tool Factory 为我的产品创建一个广告文案生成工具。
+请从这个 GitHub 仓库获取 Ads Tool Factory 模板：
+https://github.com/unthinker69/ads-tool-factory-share-kit
 
-请先阅读 README_FOR_ANY_AI.md、docs/PRODUCT_INTAKE_FORM.md、docs/PROMOTION_PROTOCOL.md、docs/RELEASE_CHECKLIST.md。
+请把它下载、clone 或 fork 到我自己的工作区，然后基于这个模板为我的产品创建一个广告文案生成工具。不要修改原作者仓库；所有改动都只发生在我自己的副本里。
+
+获取仓库后，请先阅读 README_FOR_ANY_AI.md、docs/PRODUCT_INTAKE_FORM.md、docs/PROMOTION_PROTOCOL.md、docs/RELEASE_CHECKLIST.md。
 
 第一步不要直接开发。请先弹出一份产品接入需求表，要求我提供产品名、投放国家、产品语言、目标人群、投放版位、产品链接、核心功能、品牌书、产品文档、功能文档、合规限制、参考素材和期望 UI 风格。
 
