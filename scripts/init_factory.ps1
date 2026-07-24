@@ -24,7 +24,6 @@ New-Item -Path (Join-Path $targetRoot "products") -ItemType Directory -Force | O
 $ownerFile = Join-Path $targetRoot "OWNER.md"
 Set-Content -LiteralPath $ownerFile -Value "# Factory Owner`n`nOwner: $OwnerName`n`nThis is an independent local factory created from a share kit." -Encoding UTF8
 
-Write-Host "Created independent factory: $targetRoot"
+Write-Host "Created independent ads tool factory: $targetRoot"
 Write-Host "Next: cd $targetRoot"
 Write-Host "Then: .\\scripts\\new_product.ps1 -Slug my-product -DisplayName 'My Product' -Industry 'general'"
-

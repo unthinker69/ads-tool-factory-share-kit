@@ -27,5 +27,4 @@ Get-ChildItem -Path $templateDir -Filter "*.template" | ForEach-Object {
 }
 
 Write-Host "Created product branch: $productDir"
-Write-Host "Send this task file to your AI agent: $productDir\TASK.md"
-
+Write-Host "Use this task file with your AI coding agent: $productDir\TASK.md"

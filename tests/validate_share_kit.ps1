@@ -14,7 +14,7 @@ $required = @(
   "docs\distribution_manifest.md",
   "docs\PROMOTION_PROTOCOL.md",
   "docs\RELEASE_CHECKLIST.md",
-  "scripts\init_friend_factory.ps1",
+  "scripts\init_factory.ps1",
   "scripts\new_product.ps1"
 )
 
@@ -40,4 +40,3 @@ if ($forbiddenFiles) {
 
 Write-Host "Share-kit validation passed."
 Write-Host "Root: $root"
-

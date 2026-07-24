@@ -1,6 +1,6 @@
-# Instructions For Any AI Agent
+# Instructions For AI Coding Agents
 
-You are working inside an Ads Tool Factory created from a share kit.
+You are working inside an Ads Tool Factory for performance marketers and growth teams. The factory helps create product-specific ad copy generation tools with reusable API, provider-pool, scoring, and release-governance standards.
 
 ## Read First
 
@@ -18,13 +18,20 @@ Before making changes, read:
 - Do not distribute a branch optimization unless the user explicitly says to distribute it.
 - Do not copy secrets, Cloudflare tokens, provider API keys, KV data, or private product source from another factory.
 - Do not invent claims for regulated categories such as finance, health, legal, or credit.
+- Treat advertising claims as evidence-bound. If product facts, certification, pricing, payout, delivery time, or compliance evidence is missing, keep copy generic and mark the gap.
 
 ## Product Work Pattern
 
 1. Create or inspect the product branch under `products/<slug>/`.
-2. Build the product-specific configuration and UI/API behavior.
+2. Build product-specific configuration, prompt rules, UI defaults, API schema, scoring guardrails, and release checks.
 3. Reuse only the modules that are listed in `docs/distribution_manifest.md`.
 4. Record local branch optimizations in `docs/branch_optimizations.md`.
 5. If the user explicitly approves distribution, add the item to `docs/distribution_queue.md`.
 6. Run the release checklist and report verification.
 
+## Marketing Quality Standard
+
+- Use paid-media language, not generic chatbot copy.
+- Keep ad assets platform-aware: concise hooks, benefit clarity, CTA discipline, byte/character constraints, and market localization.
+- Preserve product truthfulness and compliance boundaries over short-term conversion wording.
+- Make API documentation clear enough for external AI agents to adjust `qty`, `agent_id`, provider-pool mode, and score targets without manual explanation.

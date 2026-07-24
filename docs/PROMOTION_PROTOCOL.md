@@ -14,7 +14,7 @@ This record does not allow other branches to inherit it.
 
 ## Explicit Distribution Only
 
-Only when the local owner explicitly asks to distribute an optimization may it be added to:
+Only when the responsible owner explicitly asks to distribute an optimization may it be added to:
 
 ```text
 docs/distribution_queue.md
@@ -29,9 +29,9 @@ Examples of explicit approval:
 
 ## Where To Promote
 
-- `core/`: account, BYOK, provider pool contract, API schema, OpenAPI, deployment standards.
-- `modules/`: score control, platform copy strategy, industry strategy, translation, batch generation.
-- `products/<slug>/`: brand, claims, countries, language, tone, compliance wording, product-specific scoring.
+- `core/`: account, BYOK, provider pool contract, API schema, OpenAPI, deployment standards, release governance.
+- `modules/`: score control, platform copy strategy, industry strategy, localization, translation, batch generation.
+- `products/<slug>/`: brand, claims, countries, language, tone, compliance wording, product-specific scoring, customer evidence.
 
 ## Required Record
 
@@ -59,4 +59,3 @@ For approved distribution:
 - Verification required:
 - Status: approved_for_distribution
 ```
-

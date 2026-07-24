@@ -1,21 +1,29 @@
-# Ads Tool Factory Share Kit
+# Ads Tool Factory
 
-这是一个可分享的广告工具工厂套件，用来帮助不同产品快速生成自己的广告文案工具。
+面向广告优化师、增长团队和投放运营团队的广告文案工具工厂模板。它用于把成熟的广告文案生成流程，复制成适配不同产品、市场和投放场景的独立工具。
 
-这个 share-kit 不包含原作者的私有产品源码、Cloudflare token、Worker secret、KV 数据或用户 API key。
+该模板适合用于搭建：
 
-## 朋友应该怎么用
+- 产品专属广告文案生成器
+- Google App Campaign 素材资产生成工具
+- 多品类批量文案生成工具
+- 可被外部 AI 调用的广告文案 API
+- 带评分控制、模型池和 BYOK 的内部投放效率工具
 
-1. 下载或 clone 这个仓库。
-2. 在自己的电脑上初始化一个自己的工厂目录。
-3. 为自己的产品创建一个产品分支。
-4. 把产品分支里的 `TASK.md` 发给自己使用的 AI 工具。
+## Core Capabilities
 
-## 快速开始
+- Per-user BYOK: 每个使用者配置自己的模型 key。
+- Provider pool: 支持多模型池和 agent-sticky 分配。
+- External AI API: 通过 OpenAPI/schema 让其他 AI 工具可调用。
+- Score control: 支持最低评分门槛、候选排序、吞吐优先默认值和动态重试提示。
+- Selective distribution: 产品分支优化默认不扩散，只有明确授权后才可分发到 core/modules。
+- Release checklist: 面向上线验收、API 可用性、数据隔离和合规边界的检查清单。
+
+## Quick Start
 
 ```powershell
-cd <这个仓库目录>
-.\scripts\init_friend_factory.ps1 -FactoryRoot "D:\MyAdsToolFactory" -OwnerName "your-name"
+cd <repo>
+.\scripts\init_factory.ps1 -FactoryRoot "D:\MyAdsToolFactory" -OwnerName "your-team"
 cd D:\MyAdsToolFactory
 .\scripts\new_product.ps1 -Slug my-product -DisplayName "My Product" -Industry "utility-app" -BasedOn "share-kit"
 ```
@@ -26,26 +34,25 @@ cd D:\MyAdsToolFactory
 D:\MyAdsToolFactory\products\my-product\TASK.md
 ```
 
-## 不使用 Codex 也可以
+## AI Agent Workflow
 
-如果你用 Claude、Cursor、Gemini、Kimi、通义或其他 AI，把下面这些文件作为上下文发给它：
+如果团队使用 Claude、Cursor、Gemini、Kimi、通义或其他 AI coding agent，把下面这些文件作为上下文发给它：
 
 - `README_FOR_ANY_AI.md`
 - `docs/PROMOTION_PROTOCOL.md`
 - `docs/RELEASE_CHECKLIST.md`
 - `products/<your-product>/TASK.md`
 
-## 分发规则
+## Governance Model
 
-你朋友的工厂是他自己的。他可以在自己的工厂里创建旁系产品、记录优化、决定是否分发给自己的其他产品。
+每个团队在自己的环境里创建独立工厂、独立产品分支和独立部署配置。产品分支优化默认是本地能力，不会自动扩散到其他产品。
 
-他不能通过这个 share-kit 修改原作者的私人工厂，也不能访问原作者的 Cloudflare、KV、secret 或产品源码。
+只有当负责人明确批准时，某个优化才可以进入 `docs/distribution_queue.md`，并被后续产品分支继承。
 
-## 安全检查
+## Validation
 
-分享前或上传 GitHub 前运行：
+发布或交付前运行：
 
 ```powershell
 .\tests\validate_share_kit.ps1
 ```
-

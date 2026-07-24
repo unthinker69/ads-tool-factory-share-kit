@@ -2,21 +2,21 @@
 
 ## Goal
 
-Build an ad copy generation tool for this product using the factory standards.
+Build a product-specific advertising copy generation tool using the factory standards.
 
 ## Target Users
 
 To be filled by the owner.
 
-## Product Facts
+## Product Evidence
 
-Only use facts provided by the owner or verified product materials.
+Only use facts provided by the owner or verified product materials. Do not infer certifications, pricing, delivery speed, compliance status, market rank, or performance benchmarks.
 
 ## Core Benefits
 
 - To be filled by the owner.
 
-## Default Ad Platform
+## Default Paid Media Surface
 
 - Google App Campaign
 
@@ -33,4 +33,3 @@ Only use facts provided by the owner or verified product materials.
 ## Distribution Policy
 
 Optimizations created in this product branch stay local unless the owner explicitly approves distribution.
-

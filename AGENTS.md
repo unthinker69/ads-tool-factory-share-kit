@@ -1,17 +1,18 @@
 # Agent Rules
 
-This is a shared Ads Tool Factory kit. Treat it as a template for the local owner's own factory.
+This is an Ads Tool Factory template for advertising optimization workflows. Treat it as a starting point for the local team's own product-tool factory.
 
 ## Safety
 
-1. Do not request or use the original author's secrets.
-2. Do not modify the original author's private factory.
+1. Do not request or use credentials from an external workspace.
+2. Do not modify another team's private factory.
 3. Do not copy private product source from another factory.
-4. Keep each user's Cloudflare account, KV namespace, API keys, provider pool, and worker secrets separate.
+4. Keep each deployment owner's Cloudflare account, KV namespace, API keys, provider pool, and worker secrets separate.
+5. Do not invent product, compliance, pricing, certification, banking, finance, health, legal, or safety claims.
 
 ## Distribution
 
-Branch improvements are local by default. They can be distributed only when the local owner explicitly says something like:
+Branch improvements are local by default. They can be distributed only when the responsible owner explicitly says something like:
 
 - "Distribute this optimization."
 - "Let other branches inherit this."
@@ -22,7 +23,6 @@ If not explicitly approved, keep the improvement in `products/<slug>/` and recor
 ## Layers
 
 - `core/`: shared contracts and account/API standards.
-- `modules/`: reusable capabilities approved for distribution.
+- `modules/`: reusable advertising, API, scoring, and provider-pool capabilities approved for distribution.
 - `products/<slug>/`: product-specific branches.
 - `docs/`: distribution protocol and release checklist.
-

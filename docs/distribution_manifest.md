@@ -1,6 +1,6 @@
 # Distribution Manifest
 
-This share-kit contains only capabilities that were approved for distribution.
+This repository contains only reusable capabilities approved for distribution into independent advertising-tool factories.
 
 ## Included Core Standards
 
@@ -8,6 +8,7 @@ This share-kit contains only capabilities that were approved for distribution.
 - Shared account/profile store with product-local provider pools.
 - External AI API command panel requirements.
 - AI-callable API guidance for quantity, agent assignment, provider pool modes, and score targets.
+- Release governance for BYOK, product-local provider pools, OpenAPI, and regulated-claim safety.
 
 ## Included Modules
 
@@ -23,4 +24,4 @@ This share-kit contains only capabilities that were approved for distribution.
 - KV namespace values.
 - Provider API keys.
 - Product-specific compliance word lists unless separately supplied by the local owner.
-
+- Product-specific claims, brand books, performance benchmarks, client materials, and market evidence.
