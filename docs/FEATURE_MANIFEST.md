@@ -32,4 +32,10 @@ The update script uses `id`, `tags`, and `files` to detect semantic overlap with
 
 - title: UI theme and color-token guidance
 - tags: ui-theme, color, branding, interface-customization
-- files: templates\product\brief.md.template, README_FOR_ANY_AI.md
+- files: templates\product\brief.md.template, templates\product\TASK.md.template, docs\PRODUCT_INTAKE_FORM.md, README_FOR_ANY_AI.md
+
+## product-intake-onboarding
+
+- title: Product intake form for new branch onboarding
+- tags: onboarding, product-intake, brand-book, product-docs, requirements-form
+- files: docs\PRODUCT_INTAKE_FORM.md, templates\product\brief.md.template, templates\product\TASK.md.template, README.md

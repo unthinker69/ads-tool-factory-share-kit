@@ -14,6 +14,7 @@ $required = @(
   "docs\distribution_manifest.md",
   "docs\FEATURE_MANIFEST.md",
   "docs\feature_registry.md",
+  "docs\PRODUCT_INTAKE_FORM.md",
   "docs\UPSTREAM_POLICY.md",
   "docs\MAINTAINER_RELEASE_FLOW.md",
   "docs\PROMOTION_PROTOCOL.md",

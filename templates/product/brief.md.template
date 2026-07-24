@@ -4,6 +4,14 @@
 
 Build a product-specific advertising copy generation tool using the factory standards.
 
+## Intake Status
+
+- Product intake form completed: no
+- Brand book received: no
+- Product documentation received: no
+- Product URL reviewed: no
+- UI palette calibrated: no
+
 ## Target Users
 
 To be filled by the owner.
@@ -11,6 +19,24 @@ To be filled by the owner.
 ## Product Evidence
 
 Only use facts provided by the owner or verified product materials. Do not infer certifications, pricing, delivery speed, compliance status, market rank, or performance benchmarks.
+
+## Required Intake Fields
+
+Use `docs/PRODUCT_INTAKE_FORM.md` at the start of this product branch. At minimum, collect:
+
+- Product name
+- Product links
+- Launch countries
+- Product language
+- Target audience
+- Paid media placements
+- Core features
+- Brand book
+- Product documentation
+- Feature documentation
+- Compliance restrictions
+- Approved / prohibited claims
+- Preferred UI style
 
 ## Core Benefits
 
@@ -33,3 +59,19 @@ Only use facts provided by the owner or verified product materials. Do not infer
 ## Distribution Policy
 
 Optimizations created in this product branch stay local unless the owner explicitly approves distribution.
+
+## UI Direction
+
+The tool UI must be calibrated from the provided brand book, product links, product documents, logo, screenshots, or creative examples.
+
+If brand materials are provided:
+
+- Extract brand colors and use them as UI tokens.
+- Match product category, tone, and visual maturity.
+- Use product-specific examples and labels.
+
+If brand materials are missing:
+
+- Use a restrained neutral palette.
+- Mark UI palette as pending brand calibration.
+- Ask again for brand book, screenshots, or product link before final visual delivery.

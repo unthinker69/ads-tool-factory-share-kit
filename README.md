@@ -2,6 +2,20 @@
 
 面向广告优化师、增长团队和投放运营团队的广告文案工具工厂模板。它用于把成熟的广告文案生成流程，复制成适配不同产品、市场和投放场景的独立工具。
 
+## Fastest Way To Use
+
+把下面这段话直接粘贴给你的 AI coding agent：
+
+```text
+请基于 Ads Tool Factory 为我的产品创建一个广告文案生成工具。
+
+请先阅读 README_FOR_ANY_AI.md、docs/PRODUCT_INTAKE_FORM.md、docs/PROMOTION_PROTOCOL.md、docs/RELEASE_CHECKLIST.md。
+
+第一步不要直接开发。请先弹出一份产品接入需求表，要求我提供产品名、投放国家、产品语言、目标人群、投放版位、产品链接、核心功能、品牌书、产品文档、功能文档、合规限制、参考素材和期望 UI 风格。
+
+拿到资料后，请基于品牌书、产品文档和产品链接，定制这个工具的默认参数、广告文案策略、评分规则、UI 配色和界面风格。所有产品事实必须来自我提供或可验证的资料，不要编造。
+```
+
 该模板适合用于搭建：
 
 - 产品专属广告文案生成器
@@ -39,6 +53,7 @@ D:\MyAdsToolFactory\products\my-product\TASK.md
 如果团队使用 Claude、Cursor、Gemini、Kimi、通义或其他 AI coding agent，把下面这些文件作为上下文发给它：
 
 - `README_FOR_ANY_AI.md`
+- `docs/PRODUCT_INTAKE_FORM.md`
 - `docs/PROMOTION_PROTOCOL.md`
 - `docs/RELEASE_CHECKLIST.md`
 - `products/<your-product>/TASK.md`
