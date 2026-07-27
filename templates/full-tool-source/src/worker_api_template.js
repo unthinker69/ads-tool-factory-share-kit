@@ -4,7 +4,7 @@ const DEFAULT_MODEL_OPENAI = "deepseek-chat";
 const DEFAULT_MODEL_ANTHROPIC = "claude-sonnet-4-6";
 const MAX_QTY_PER_TYPE = 50;
 const PRODUCT_NAME = "__PRODUCT_NAME__";
-const PRODUCT_CONTEXT = "a personal finance app for everyday money control in Mexico";
+const PRODUCT_CONTEXT = "a product-specific advertising tool; use only customer-confirmed facts";
 const PRODUCT_POOL_KEY_PREFIX = "provider_pool:__PRODUCT_SLUG__:";
 
 const CORS_HEADERS = {
@@ -250,19 +250,18 @@ function normalizeOpenAIBaseUrl(rawUrl) {
 }
 
 function buildPrompt(params, category) {
-  const regions = ["MX"];
-  const lang = "es-MX";
+  const regions = asArray(params.regions, ["CUSTOMER-SUPPLIED-MARKET"]);
+  const lang = params.language || params.lang || "en";
   const device = params.device || "android";
-  const benefits = asArray(params.benefits, ["Pay water, electricity and gas bills from the app"]);
+  const benefits = asArray(params.benefits, ["Use only customer-confirmed product benefits"]);
   const type = params.type || "both";
   const tone = params.tone || "clear, calm, and protective";
   const qty = clampInt(params.qty, 1, MAX_QTY_PER_TYPE, 5);
   const control = params.score_control || params.scoreControl || {};
   const targets = control.targets || params.targets || {};
 
-  const lmap = { "es-MX":"Mexican Spanish", es:"Mexican Spanish" };
-  const rmap = { MX:"Mexico" };
-  const rstr = regions.map(r => rmap[r] || r).join(", ");
+  const lmap = { "es-MX":"Mexican Spanish", es:"Spanish", en:"English", "en-US":"US English", "zh-CN":"Simplified Chinese", "zh-TW":"Traditional Chinese", fr:"French", de:"German", pt:"Portuguese", ja:"Japanese", ko:"Korean" };
+  const rstr = regions.join(", ");
   const dev = device === "both" ? "iOS and Android" : device === "ios" ? "iOS" : "Android";
   const tstr = type === "short"
     ? `${qty} short headlines (each <=25 bytes)`
@@ -271,21 +270,21 @@ function buildPrompt(params, category) {
     : `${qty} short headlines (each <=25 bytes) AND ${qty} long descriptions (each <=75 bytes)`;
 
   const hints = [
-    regions.includes("MX") ? "Mexican users may live with limited or variable income and need clarity, control, calm, and practical help for daily money friction." : "",
-    
+    params.audience ? `Target audience: ${params.audience}.` : "",
+    params.product_context || PRODUCT_CONTEXT,
   ].filter(Boolean).join(" ");
 
   const tg = defaultTargets(targets);
   const scoreGuide = `QUALITY SCORING SYSTEM. Meet every minimum target before output:
 - Hook >= ${tg.hook}/10: opening must grab attention. Score uses power words in the first third (+5), number in first half (+3), or question mark (+2).
-- Relevance >= ${tg.rel}/10: include the selected __PRODUCT_NAME__ function in natural Mexican Spanish, using concrete action words such as pagar servicios, recargar celular, consultar saldo, transferir, agregar efectivo, retirar efectivo, revisar movimientos, or programar pagos.
-- CTA >= ${tg.cta}/10: include a natural es-MX action verb such as Descarga, Usa, Paga, Recarga, Consulta, Revisa, Transfiere, Agrega, Retira, Programa, or Conoce.
+- Relevance >= ${tg.rel}/10: include a concrete, customer-confirmed function from the selected benefits in the requested language.
+- CTA >= ${tg.cta}/10: include a natural action verb in the requested language and market context.
 - Space use >= ${tg.space}/10: aim for 75-100% of the byte limit. Over limit fails.
 - Overall weighted score >= ${tg.total}/10: Hook, product relevance, CTA, space use, and __PRODUCT_NAME__ brand fit.
 The minimum targets are the caller's explicit acceptance floor. Do not silently raise the target above what the caller asked for.
 If any candidate is below target, rewrite it before returning JSON. When the caller requests large volume or lower targets, prioritize passing the explicit targets and returning enough usable copy over chasing a perfect score.`;
 
-  return `You are a senior Google Ads specialist creating compliant, conversion-oriented copy for __PRODUCT_NAME__ - a personal finance app that helps people in Mexico manage everyday money, payments, bills, transfers, and cash access - targeting ${rstr}.
+  return `You are a senior Google Ads specialist creating compliant, conversion-oriented copy for __PRODUCT_NAME__ - ${params.product_context || PRODUCT_CONTEXT} - targeting ${rstr}.
 
 Platform: Google App Campaign ads for ${dev}
 Language: ${lmap[lang] || lang}
@@ -304,12 +303,11 @@ ${scoreGuide}
 COPYWRITING RULES:
 - Headlines: clear, benefit-first, and easy to understand. No filler.
 - Descriptions: practical daily money benefit + natural CTA. Specific to the selected job-to-be-done, not generic.
-- Write about the selected concrete product functions only. Do not turn abstract jobs like control or tranquilidad into standalone claims; connect them to a real action such as paying utilities, topping up airtime, checking balance, transferring money, paying services, adding cash, withdrawing cash, reviewing transactions, or scheduling recurring payments.
-- Supported __PRODUCT_NAME__ function facts: water/electricity/gas bill pay; phone airtime top-ups; contactless store payments; pay from home; internet/phone/TV providers; tuition/school payments; taxes/government fees; catalog sales payments; insurance/tolls/transport payments; 377+ bill-pay services in 42 categories; transfers to any account; 28,531+ cash-in points; 6,984+ cash-out points; balance checks; transaction history; recurring payments; cashback on purchases; $100 welcome cashback where campaign terms apply; 24/7 support; backed by Clip.
+- Write about the selected concrete product functions only. Do not invent or assume category-specific features. Treat the supplied benefits and product facts as the complete source of truth.
 - Do NOT invent licenses, regulated status, bank partnerships, card-network relationships, security certifications, encryption standards, fee advantages, exchange-rate advantages, arrival speed, approval likelihood, savings guarantees, cashback amounts beyond supplied facts, rewards beyond supplied facts, investment returns, risk-free claims, or guaranteed approval.
 - Do NOT use exclamation marks.
 - Every copy must be unique and varied.
-- Use natural Mexican Spanish only, with simple words a Mexican Android user would understand.
+- Use natural ${lmap[lang] || lang} only, with wording appropriate for the supplied market and audience.
 - Never present roadmap-only items as live features. If evidence is missing, keep it as a neutral scenario rather than a product claim.
 
 Respond ONLY with valid JSON, no markdown, no preamble:
@@ -377,61 +375,22 @@ function blen(s) {
   return n;
 }
 
-const HOOK_WORDS = [
-  "discover", "find", "explore", "unlock", "join", "get", "try", "see", "now", "free",
-  "new", "best", "top", "real", "true", "only", "must", "why", "how", "what",
-  "descubre", "descarga", "instala", "encuentra", "conoce", "prueba", "usa", "empieza", "paga", "recarga", "consulta",
-  "transfiere", "retira", "agrega", "controla", "administra", "organiza", "revisa", "resuelve",
-  "hoy", "ahora", "facil", "claro", "tranquilo", "seguro", "dinero", "saldo",
-  "\u53d1\u73b0", "\u63a2\u7d22", "\u514d\u8d39", "\u7acb\u5373", "\u6700\u597d", "\u771f\u5b9e", "\u52a0\u5165", "\u83b7\u53d6", "\u4e86\u89e3", "\u5f00\u59cb",
-  "entdecke", "finde", "kostenlos", "jetzt", "beste", "echte", "neu",
-  "d\u00e9couvrez", "trouvez", "gratuit", "maintenant", "meilleur", "vrai", "nouveau"
-];
+const SCORE_LANGUAGE_TERMS = {
+  en: { hook: ["discover", "find", "explore", "unlock", "join", "get", "try", "now", "new", "best", "why", "how", "what"], cta: ["download", "install", "get", "try", "join", "start", "explore", "discover", "shop", "learn", "open", "use", "sign up"], forbidden: ["miracle", "guaranteed", "risk-free", "number one", "safest"] },
+  es: { hook: ["descubre", "descarga", "instala", "encuentra", "conoce", "prueba", "usa", "empieza", "hoy", "ahora", "facil", "claro", "por que", "como"], cta: ["descarga", "instala", "usa", "empieza", "prueba", "conoce", "abre", "compra", "aprende", "registra"], forbidden: ["milagro", "garantizado", "sin riesgo", "numero 1", "el mejor"] },
+  "es-MX": { hook: ["descubre", "descarga", "instala", "encuentra", "conoce", "prueba", "usa", "empieza", "hoy", "ahora", "facil", "claro", "por que", "como"], cta: ["descarga", "instala", "usa", "empieza", "prueba", "conoce", "abre", "compra", "aprende", "registra"], forbidden: ["milagro", "garantizado", "sin riesgo", "numero 1", "el mejor"] },
+  "zh-CN": { hook: ["发现", "探索", "免费", "立即", "最好", "真实", "加入", "获取", "了解", "开始"], cta: ["下载", "安装", "开始", "加入", "探索", "发现", "立即", "体验", "注册"], forbidden: ["保证", "无风险", "第一", "最安全", "稳赚"] },
+  "zh-TW": { hook: ["發現", "探索", "免費", "立即", "最好", "真實", "加入", "取得", "了解", "開始"], cta: ["下載", "安裝", "開始", "加入", "探索", "發現", "立即", "體驗", "註冊"], forbidden: ["保證", "無風險", "第一", "最安全", "穩賺"] },
+  fr: { hook: ["découvrez", "trouvez", "gratuit", "maintenant", "meilleur", "vrai", "nouveau", "pourquoi", "comment"], cta: ["téléchargez", "installez", "commencez", "découvrez", "essayez", "ouvrez", "inscrivez"], forbidden: ["miracle", "garanti", "sans risque", "numéro 1", "le meilleur"] },
+  de: { hook: ["entdecke", "finde", "kostenlos", "jetzt", "beste", "echte", "neu", "warum", "wie"], cta: ["herunterladen", "installieren", "jetzt", "starten", "entdecken", "ausprobieren", "öffnen"], forbidden: ["garantiert", "risikofrei", "nummer 1", "am sichersten"] }
+};
 
-const CTA_WORDS = [
-  "download", "install", "get", "try", "join", "start", "explore", "discover", "find", "see",
-  "shop", "browse", "learn", "watch", "read", "sign up", "open", "use",
-  "download now", "get it", "try it", "install now",
-  "descarga", "instala", "usa", "empieza", "prueba", "conoce", "abre", "paga", "recarga",
-  "consulta", "revisa", "transfiere", "envia", "recibe", "agrega", "deposita", "retira",
-  "programa", "cobra", "maneja", "controla", "administra",
-  "\u4e0b\u8f7d", "\u5b89\u88c5", "\u5f00\u59cb", "\u52a0\u5165", "\u63a2\u7d22", "\u53d1\u73b0", "\u7acb\u5373", "\u514d\u8d39\u4e0b\u8f7d", "\u4f53\u9a8c",
-  "herunterladen", "installieren", "jetzt", "starten", "entdecken",
-  "t\u00e9l\u00e9charger", "installer", "commencer", "d\u00e9couvrir", "essayer"
-];
-
-const MI_CLIP_BENEFIT_CONCEPTS = [
-  { keys: ["bill", "bills", "utility", "utilities", "water", "electricity", "gas", "services", "service", "cfe", "naturgy"], terms: ["servicio", "servicios", "recibo", "recibos", "agua", "luz", "gas", "cfe", "naturgy", "ecogas", "z-gas", "pagar", "paga"] },
-  { keys: ["airtime", "top-up", "top-ups", "phone", "carrier", "telcel", "movistar", "at&t"], terms: ["recarga", "recargas", "celular", "telefono", "telcel", "movistar", "at&t", "saldo"] },
-  { keys: ["balance", "available", "foresight", "spending", "money"], terms: ["saldo", "dinero", "disponible", "consulta", "revisa", "antes de gastar", "control"] },
-  { keys: ["history", "transaction", "transactions", "movement", "movements"], terms: ["movimientos", "historial", "transacciones", "pagas", "recibes"] },
-  { keys: ["transfer", "transfers", "send", "receive", "account"], terms: ["transferencia", "transferencias", "transfiere", "envia", "recibe", "cuenta"] },
-  { keys: ["cash-in", "cash in", "add cash", "deposit", "points", "7-eleven", "soriana", "kiosko"], terms: ["agrega efectivo", "deposita", "efectivo", "saldo", "7-eleven", "soriana", "kiosko", "farmacias del ahorro", "puntos"] },
-  { keys: ["cash-out", "cash out", "withdraw", "withdrawal"], terms: ["retira efectivo", "retira", "retiro", "efectivo", "soriana", "kiosko", "willys"] },
-  { keys: ["cashback", "reward", "rewards", "promo", "promos"], terms: ["cashback", "reembolso", "recompensa", "recompensas", "promo", "promociones", "compras"] },
-  { keys: ["contactless", "tap", "store", "payment", "payments"], terms: ["pago", "pagos", "sin contacto", "tienda", "telefono", "celular"] },
-  { keys: ["school", "tuition", "education"], terms: ["colegiatura", "colegiaturas", "escuela", "escuelas", "educacion"] },
-  { keys: ["tax", "taxes", "government", "fees"], terms: ["predial", "tenencia", "impuestos", "gobierno", "tramites"] },
-  { keys: ["recurring", "schedule", "on time", "late"], terms: ["programa", "recurrentes", "a tiempo", "recuerda", "pagos"] },
-  { keys: ["support", "24/7", "help"], terms: ["ayuda", "soporte", "atencion", "24/7", "respaldo"] },
-  { keys: ["clip", "backed"], terms: ["clip", "respaldo"] }
-];
-
-const MI_CLIP_BRAND_TERMS = [
-  "control", "tranquilidad", "claro", "clara", "claridad", "seguro", "segura", "confianza",
-  "facil", "simple", "diario", "dia a dia", "dinero", "saldo", "sin salir", "desde casa"
-];
-
-const MI_CLIP_CONCRETE_FUNCTION_TERMS = [
-  "paga", "pagar", "recarga", "recargas", "consulta", "revisa", "transfiere", "envia",
-  "recibe", "agrega", "deposita", "retira", "programa", "historial", "movimientos",
-  "servicios", "recibos", "agua", "luz", "gas", "saldo", "efectivo", "cashback"
-];
-
-const MI_CLIP_HYPERBOLE_TERMS = [
-  "milagro", "increible", "nunca", "jamas", "garantizado", "asegurado", "sin riesgo",
-  "al instante", "instantaneo", "gratis siempre", "el mejor", "la mejor", "numero 1"
-];
+function scoreLexicon(language = "", benefits = [], extra = {}) {
+  const base = SCORE_LANGUAGE_TERMS[language] || SCORE_LANGUAGE_TERMS[String(language).split("-")[0]] || SCORE_LANGUAGE_TERMS.en;
+  const terms = asArray(benefits, []).flatMap(value => normalizeForScore(value).split(/[^\p{L}\p{N}]+/u)).filter(word => word.length > 2);
+  const extraTerms = asArray(extra.score_terms || extra.scoreTerms, []);
+  return { hook: base.hook, cta: base.cta, benefit: [...new Set([...terms, ...extraTerms.map(normalizeForScore)])], brand: asArray(extra.brand_terms || extra.brandTerms, [PRODUCT_NAME]), forbidden: base.forbidden };
+}
 
 function defaultTargets(targets = {}) {
   return {
@@ -443,7 +402,8 @@ function defaultTargets(targets = {}) {
   };
 }
 
-function scoreText(text, type, benefits) {
+function scoreText(text, type, benefits, options = {}) {
+  const lexicon = scoreLexicon(options.language || "en", benefits, options);
   const source = String(text || "");
   const t = source.toLowerCase();
   const normalized = normalizeForScore(source);
@@ -452,19 +412,19 @@ function scoreText(text, type, benefits) {
   const bytes = blen(source);
 
   const firstThird = normalized.slice(0, Math.ceil(normalized.length / 3));
-  const hasHook = HOOK_WORDS.some(w => firstThird.includes(normalizeForScore(w)));
+  const hasHook = lexicon.hook.some(w => firstThird.includes(normalizeForScore(w)));
   const hasNumber = /\d/.test(source.slice(0, Math.ceil(source.length / 2)));
   const hasQuestion = source.includes("?");
   const hookScore = Math.min(10, (hasHook ? 6 : 0) + (hasNumber ? 2 : 0) + (hasQuestion ? 2 : 0));
 
-  const relScore = miClipRelevanceScore(normalized, benefits);
+  const relScore = relevanceScore(normalized, lexicon.benefit);
 
-  const hasCTA = CTA_WORDS.some(w => normalized.includes(normalizeForScore(w)));
+  const hasCTA = lexicon.cta.some(w => normalized.includes(normalizeForScore(w)));
   const ctaScore = hasCTA ? 10 : (kind === "short" ? 4 : 2);
 
   const pct = bytes / max;
   const spaceScore = bytes > max ? 0 : pct >= 0.75 ? 10 : pct >= 0.55 ? 7 : pct >= 0.35 ? 4 : 2;
-  const brandScore = miClipBrandFitScore(normalized);
+  const brandScore = brandFitScore(normalized, lexicon.brand, lexicon.benefit, lexicon.forbidden);
   const total = Math.round(hookScore * 0.22 + relScore * 0.34 + ctaScore * 0.18 + spaceScore * 0.10 + brandScore * 0.16);
 
   return {
@@ -489,29 +449,17 @@ function normalizeForScore(value) {
     .trim();
 }
 
-function miClipRelevanceScore(normalizedText, benefits) {
-  const selected = asArray(benefits, []);
-  const selectedNeedles = normalizeForScore(selected.join(" ")).split(/[\s,&/()·+.-]+/).filter(w => w.length > 3);
-  const directMatches = selectedNeedles.filter(w => normalizedText.includes(w)).length;
-  let conceptMatches = 0;
-  const selectedText = normalizeForScore(selected.join(" "));
-  MI_CLIP_BENEFIT_CONCEPTS.forEach(group => {
-    const relevant = group.keys.some(key => selectedText.includes(normalizeForScore(key)));
-    if (!relevant) return;
-    if (group.terms.some(term => normalizedText.includes(normalizeForScore(term)))) conceptMatches++;
-  });
-  const concreteMatches = MI_CLIP_CONCRETE_FUNCTION_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
-  const weighted = conceptMatches * 2 + Math.min(2, directMatches) + Math.min(2, concreteMatches);
-  return Math.min(10, weighted >= 6 ? 10 : weighted >= 4 ? 8 : weighted >= 2 ? 6 : concreteMatches ? 5 : 2);
+function relevanceScore(normalizedText, benefitTerms = []) {
+  const hits = benefitTerms.filter(term => term && normalizedText.includes(normalizeForScore(term))).length;
+  return Math.min(10, hits >= 5 ? 10 : hits >= 3 ? 8 : hits >= 1 ? 6 : 2);
 }
 
-function miClipBrandFitScore(normalizedText) {
-  const brandHits = MI_CLIP_BRAND_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
-  const concreteHits = MI_CLIP_CONCRETE_FUNCTION_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
-  const hyperboleHits = MI_CLIP_HYPERBOLE_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
-  const vaguePronounPenalty = /\b(esto|eso|esta app|estas funciones)\b/.test(normalizedText) ? 1 : 0;
+function brandFitScore(normalizedText, brandTerms = [], benefitTerms = [], forbidden = []) {
+  const brandHits = brandTerms.filter(term => normalizedText.includes(normalizeForScore(term))).length;
+  const concreteHits = benefitTerms.filter(term => normalizedText.includes(normalizeForScore(term))).length;
+  const forbiddenHits = forbidden.filter(term => normalizedText.includes(normalizeForScore(term))).length;
   let score = 4 + Math.min(3, brandHits) + Math.min(3, concreteHits);
-  score -= Math.min(4, hyperboleHits * 2 + vaguePronounPenalty);
+  score -= Math.min(4, forbiddenHits * 2);
   return Math.max(0, Math.min(10, score));
 }
 
@@ -547,7 +495,7 @@ function annotateCopy(text, type, benefits, targets = {}, extra = {}) {
   const copyType = inferCopyType(text, type);
   const limit = copyType === "short" ? 25 : 75;
   const bytes = blen(text);
-  const score = scoreText(text, copyType, benefits);
+  const score = scoreText(text, copyType, benefits, extra);
   const complianceViolations = financialComplianceViolations(text);
   return {
     ...extra,
@@ -834,9 +782,9 @@ function retryGuidance(items = [], selectedItems = [], targets = {}, goal = {}) 
   const actions = {
     over: "Shorten first: remove side clauses, adjectives, repeated brand words, and keep one benefit plus one CTA only.",
     compliance: "Remove unsupported finance claims: no license, bank partnership, security certification, instant arrival, fee advantage, guaranteed approval, risk-free, or guaranteed savings language.",
-    hook: "Strengthen the opening: start with a natural Mexican Spanish action word, a simple question, or a useful number within the first third of the copy.",
-    rel: "Increase relevance: name the selected __PRODUCT_NAME__ action in es-MX, such as pagar servicios, recargar celular, consultar saldo, transferir, agregar efectivo, retirar efectivo, revisar movimientos, or programar pagos.",
-    cta: "Add a clear Mexican Spanish action verb near the end: Descarga, Usa, Paga, Recarga, Consulta, Revisa, Transfiere, Agrega, Retira, Programa, or Conoce.",
+    hook: "Strengthen the opening with a natural action word, a simple question, or a useful number in the requested language within the first third of the copy.",
+    rel: "Increase relevance by naming one concrete customer-confirmed function from the selected benefits in the requested language.",
+    cta: "Add a clear, natural action verb for the requested language and market near the end.",
     space: "Improve byte utilization: target roughly 80-95% of the byte limit without exceeding it; add one concrete function word if too short.",
     total: "Raise overall quality: combine a stronger hook, one exact benefit keyword, and a direct CTA instead of changing only wording."
   };
@@ -851,9 +799,9 @@ function retryGuidance(items = [], selectedItems = [], targets = {}, goal = {}) 
 
 function creativeBrief(attempt, categoryIndex, rejectedItems, targets, selectedItems = [], goal = {}) {
   const frameworks = [
-    "Use direct-action es-MX hooks: Descarga, Usa, Paga, Recarga, Consulta, Revisa, Transfiere, Agrega, Retira, Programa, or Conoce. Put the action in the first third of every line.",
+    "Use a direct-action hook in the requested language and put the action in the first third of every line.",
     "Use curiosity hooks with a natural question or useful number early, then tie directly to the selected __PRODUCT_NAME__ function.",
-    "Use problem-solution copy: start with the user's daily money friction, then one concrete __PRODUCT_NAME__ action, then a clear es-MX CTA verb.",
+    "Use problem-solution copy: start with the user's need, then one concrete __PRODUCT_NAME__ function, then a clear CTA verb in the requested language.",
     "Use social-discovery copy only when it fits the product: concrete user action, benefit keyword, and no unsupported claims.",
     "Use utility-first copy: what the user can do today, concrete benefit words, and a simple CTA."
   ];
@@ -866,9 +814,9 @@ function creativeBrief(attempt, categoryIndex, rejectedItems, targets, selectedI
 - ${style}
 ADAPTIVE RETRY GUIDANCE (bounded; do not add extra constraints beyond these):
 ${fixes}
-- Aim above the caller's explicit target when possible, but do not sacrifice usable volume, natural Mexican Spanish, byte limits, or product accuracy just to chase a perfect score.
+- Aim above the caller's explicit target when possible, but do not sacrifice usable volume, natural language, byte limits, or product accuracy just to chase a perfect score.
 - Produce multiple distinct angles, not small wording variants.
-- For weak copywriting models, use this formula: es-MX action word or question first, concrete __PRODUCT_NAME__ function in the middle, natural CTA verb near the end.
+- For weak copywriting models, use this formula: action word or question first, concrete __PRODUCT_NAME__ function in the middle, natural CTA verb near the end.
 - Keep each item within byte limit; do not explain.`;
 }
 
@@ -979,8 +927,8 @@ async function generateCategoryWithScoreControl(request, providerPool, params, c
       const raw = await callModel(request, provider, prompt, true);
       const parsed = parseCopyJson(raw, type);
       const candidates = [];
-      (parsed.short || []).forEach(copy => candidates.push(annotateCopy(copy, "short", benefits, control.targets, { category, attempt, provider_index: offset })));
-      (parsed.long || []).forEach(copy => candidates.push(annotateCopy(copy, "long", benefits, control.targets, { category, attempt, provider_index: offset })));
+      (parsed.short || []).forEach(copy => candidates.push(annotateCopy(copy, "short", benefits, control.targets, { category, attempt, provider_index: offset, language: params.language || params.lang || "en", brand_terms: params.brand_terms || params.brandTerms || [PRODUCT_NAME], score_terms: params.score_terms || params.scoreTerms || [] })));
+      (parsed.long || []).forEach(copy => candidates.push(annotateCopy(copy, "long", benefits, control.targets, { category, attempt, provider_index: offset, language: params.language || params.lang || "en", brand_terms: params.brand_terms || params.brandTerms || [PRODUCT_NAME], score_terms: params.score_terms || params.scoreTerms || [] })));
       return { raw, candidates, provider };
     });
 
@@ -1185,7 +1133,9 @@ async function handleScore(request) {
     const annotated = annotateCopy(input.text, input.type, input.benefits || benefits, targets, {
       category: input.category || body.category || "",
       region: input.region || "",
-      language: input.language || body.language || ""
+      language: input.language || body.language || "en",
+      brand_terms: input.brand_terms || body.brand_terms || [PRODUCT_NAME],
+      score_terms: input.score_terms || body.score_terms || []
     });
     return { ...annotated, passes_ranges: scoreRangePasses(annotated.score, ranges) };
   });
@@ -1483,9 +1433,9 @@ function openApiSpec(request) {
     paths: {
       "/api/ad-copy": {
         post: {
-          operationId: "generateMiClipAdCopy",
+          operationId: "generateProductAdCopy",
           summary: "Generate __PRODUCT_NAME__ Google Ads copy. AI callers should dynamically set qty to the requested output volume, pass agent_id for sticky model-pool assignment, and tune score_control targets/quality_goal when higher-scoring output is needed.",
-          description: "For external AI agents: qty controls requested output count per type and accepts 1-50. If type is both, qty means qty short headlines plus qty long descriptions per category. When using a saved provider pool, pass a stable agent_id so different agents can be assigned different saved models in agent_sticky mode; omit agent_id or use provider_pool_mode=parallel when one request should use the pool concurrently. score_control.targets are the minimum accepted scores. Omit quality_goal for throughput; set quality_goal only when the user explicitly asks for higher quality or stricter screening. If the user asks to lower targets to 6, lower both targets and quality_goal to around 6-7 instead of keeping quality_goal at 9. Always keep __PRODUCT_NAME__ compliance limits: Mexico only, Mexican Spanish, no unsupported financial claims.",
+          description: "For external AI agents: qty controls requested output count per type and accepts 1-50. If type is both, qty means qty short headlines plus qty long descriptions per category. Pass the customer's market, language, product facts, and optional localized score_terms; never inherit facts from the template. When using a saved provider pool, pass a stable agent_id for deterministic assignment.",
           requestBody: {
             required: true,
             content: {
@@ -1498,11 +1448,11 @@ function openApiSpec(request) {
                     agent_id: { type: "string", description: "Stable caller/agent identifier. If present, default provider_pool_mode becomes agent_sticky, assigning this agent to one deterministic saved model from the current product provider pool. Use different agent_id values for different AI agents to distribute work across saved models." },
                     provider_index: { type: "integer", description: "Optional explicit pool index for this request." },
                     provider_pool_mode: { type: "string", enum: ["parallel", "agent_sticky"], default: "parallel", description: "parallel uses the saved model pool concurrently/round-robin; agent_sticky maps a stable agent_id to one saved model. If agent_id is supplied and this field is omitted, the API defaults to agent_sticky." },
-                    categories: { type: "array", items: { type: "string" }, default: ["Paying without stress"] },
-                    regions: { type: "array", items: { type: "string", enum: ["MX"] }, default: ["MX"], description: "__PRODUCT_NAME__ only targets Mexico; other region inputs are ignored." },
-                    language: { type: "string", enum: ["es-MX"], default: "es-MX", description: "Mexican Spanish only." },
+                    categories: { type: "array", items: { type: "string" }, default: ["Primary customer job"] },
+                    regions: { type: "array", items: { type: "string" }, default: [], description: "Customer-supplied target markets." },
+                    language: { type: "string", default: "en", description: "Customer-supplied ad language." },
                     device: { type: "string", enum: ["android", "ios", "both"], default: "android" },
-                    benefits: { type: "array", items: { type: "string" }, default: ["Pay water, electricity and gas bills from the app"] },
+                    benefits: { type: "array", items: { type: "string" }, default: ["Customer-confirmed product function"] },
                     type: { type: "string", enum: ["both", "short", "long"], default: "both" },
                     tone: { type: "string", default: "clear and practical" },
                     qty: { type: "integer", minimum: 1, maximum: 50, default: 5, description: "Requested output count per type per category. AI callers should set this dynamically from the user's requested quantity instead of leaving the default. For type=both, qty returns up to qty short headlines and qty long descriptions." },
@@ -1565,7 +1515,7 @@ function openApiSpec(request) {
         post: {
           operationId: "scoreMiClipAdCopy",
           summary: "Score existing ad copy with the same scoring logic as the web UI",
-          requestBody: { required: true, content: { "application/json": { schema: { type: "object", properties: { copies: { type: "array", items: { type: "object", properties: { text: { type: "string" }, type: { type: "string", enum: ["short", "long"] } } } }, benefits: { type: "array", items: { type: "string" } }, targets: { type: "object" }, ranges: { type: "object" } } } } } },
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", properties: { copies: { type: "array", items: { type: "object", properties: { text: { type: "string" }, type: { type: "string", enum: ["short", "long"] } } } }, benefits: { type: "array", items: { type: "string" } }, language: { type: "string", default: "en" }, brand_terms: { type: "array", items: { type: "string" }, description: "Customer-confirmed brand terms." }, score_terms: { type: "array", items: { type: "string" }, description: "Localized product/category terms supplied by the customer or branch configuration." }, targets: { type: "object" }, ranges: { type: "object" } } } } } },
           responses: { "200": { description: "Scored copy items" } }
         }
       },
@@ -1615,11 +1565,10 @@ function apiSchema(request) {
         fields: ["score_control.targets", "score_control.quality_goal", "score_control.max_attempts", "score_control.candidate_multiplier"],
         rule: "AI callers may raise score_control.targets and quality_goal when the user asks for higher-scoring, more polished, or stricter copy. For high-volume generation, omit quality_goal or keep it only slightly above targets. If the user says lower targets to 6, set all relevant targets to 6 and quality_goal.total to 6-7, not 9.",
         safe_defaults: { targets: { hook: 6, rel: 6, cta: 6, space: 6, total: 6 }, quality_goal: { total: 7 }, max_attempts: 2, candidate_multiplier: 2 },
-        caution: "Higher targets and quality_goal can increase latency/cost and may reduce returned volume. quality_goal is not the pass/fail floor. Never keep quality_goal at 9 after the user asked to lower scoring requirements. Never use scoring goals to override product facts, Mexico-only targeting, es-MX language, byte limits, or financial compliance restrictions."
+        caution: "Higher targets and quality_goal can increase latency/cost and may reduce returned volume. quality_goal is not the pass/fail floor. Never use scoring goals to override customer-confirmed product facts, supplied market/language, byte limits, or applicable advertising compliance restrictions."
       },
       compliance_limits: [
-        "Mexico only; use regions ['MX'].",
-        "Mexican Spanish only; use language 'es-MX'.",
+        "Use only customer-supplied markets and language.",
         "Android is the default device unless the user explicitly asks otherwise.",
         "Do not invent licenses, bank partnerships, certifications, fee advantages, arrival speed, guaranteed approval, guaranteed returns, risk-free claims, or unsupported financial promises."
       ]

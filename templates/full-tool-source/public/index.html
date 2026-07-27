@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
@@ -1054,11 +1054,11 @@ body { background:
       <div class="brand-card">
         <div>
           <div class="brand-kicker">__PRODUCT_NAME__ official copy desk</div>
-          <div class="brand-title">Control diario sin complicarte</div>
+          <div class="brand-title">Create clear, usable ad copy</div>
         </div>
         <div>
-          <div class="brand-sub">Genera Google App Campaign copy con tono claro, tranquilo y protector, usando solo beneficios respaldados por la matriz del cliente.</div>
-          <div class="brand-pills"><span>MX only</span><span>Español México</span><span>Android default</span></div>
+          <div class="brand-sub">Generate compliant campaign copy using only the product facts and brand guidance supplied for this branch.</div>
+          <div class="brand-pills"><span>Customer market</span><span>Customer language</span><span>Android default</span></div>
         </div>
       </div>
 
@@ -1072,13 +1072,13 @@ body { background:
             <i class="ti ti-clipboard-list" style="color:var(--red);font-size:18px"></i>
           </div>
           <div class="intake-text">
-            基于当前 __PRODUCT_NAME__ 金融支付工具开新分支时，先把产品资料、品牌书、产品文档和链接交给 AI，再让它调整默认选项、文案规则、UI 配色和视觉语气。
+            开新产品分支时，先把产品资料、品牌书、产品文档和链接交给 AI，再让它调整默认选项、文案规则、评分词表、UI 配色和视觉语气。
           </div>
           <ul class="intake-list">
             <li>产品名 / 类型 / 链接</li>
             <li>投放国家 / 语言 / 版位</li>
             <li>目标人群 / 使用场景</li>
-            <li>支付功能 / 卖点 / 禁用表述</li>
+            <li>核心功能 / 卖点 / 禁用表述</li>
             <li>品牌书 / 产品文档 / 合规限制</li>
             <li>UI 配色 / 参考素材 / 竞品参考</li>
           </ul>
@@ -1094,12 +1094,12 @@ body { background:
         <div class="sec-title"><i class="ti ti-world"></i> Market & Device</div>
         <div class="field-label">Target market</div>
         <div class="chips" id="c-region">
-          <div class="chip on" data-v="MX">Mexico</div>
+          <div class="chip on" data-v="CUSTOMER-MARKET">Customer market</div>
         </div>
         <div class="sub-row">
           <div class="field-label">Language</div>
           <div class="chips" id="c-lang">
-            <div class="chip on" data-v="es-MX">Español México</div>
+            <div class="chip on" data-v="en">Customer language</div>
           </div>
         </div>
         <div class="sub-row">
@@ -1115,15 +1115,10 @@ body { background:
       <div class="sec">
         <div class="sec-title"><i class="ti ti-layout-grid"></i> Money job <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0">(multi)</span></div>
         <div class="chips" id="c-cat">
-          <div class="chip on" data-v="Not running out too soon">Not running out</div>
-          <div class="chip" data-v="Paying without stress">Pay without stress</div>
-          <div class="chip" data-v="Having money when needed">Money when needed</div>
-          <div class="chip" data-v="Managing without overthinking">No overthinking</div>
-          <div class="chip" data-v="Avoiding dangerous debt">Avoid debt stress</div>
-          <div class="chip" data-v="Feeling in control">Feel in control</div>
+          <div class="chip on" data-v="Primary customer job">Primary customer job</div>
         </div>
         <div class="custom-add-row" id="custom-cat-row">
-          <input id="custom-cat-inp" type="text" placeholder="自定义 money job，如：pagar colegiatura" maxlength="30"
+          <input id="custom-cat-inp" type="text" placeholder="自定义客户任务或使用场景" maxlength="30"
             onkeydown="if(event.key==='Enter')addCustomCat()">
           <button onclick="addCustomCat()"><i class="ti ti-plus"></i></button>
         </div>
@@ -1132,28 +1127,10 @@ body { background:
       <div class="sec">
         <div class="sec-title"><i class="ti ti-bulb"></i> __PRODUCT_NAME__ benefits <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0">(multi)</span></div>
         <div class="chips" id="c-benefit">
-          <div class="chip on" data-v="Pay water, electricity and gas bills from the app">Utilities: water, electricity, gas</div>
-          <div class="chip" data-v="Top up Telcel, AT&T, Movistar and other phone carriers from the app">Phone airtime top-ups</div>
-          <div class="chip" data-v="Pay from your phone without leaving home or standing in line">Pay from home</div>
-          <div class="chip" data-v="Tap your phone to make contactless payments in stores">Contactless payment</div>
-          <div class="chip" data-v="Send and receive transfers to any account from your phone">Transfers to any account</div>
-          <div class="chip" data-v="Pay internet, phone and TV providers such as Telmex, izzi, Totalplay, Megacable, Sky and Dish">Internet, phone and TV</div>
-          <div class="chip" data-v="Pay tuition and school services from more than 121 educational institutions">Tuition and schools</div>
-          <div class="chip" data-v="Pay taxes and government fees such as property tax, vehicle tax and state services">Taxes and government fees</div>
-          <div class="chip" data-v="Pay catalog sales providers such as Jafra, Natura, Betterware, Fuller and Tupperware">Catalog sales payments</div>
-          <div class="chip" data-v="Pay insurance, tolls and transport services such as Qualitas, Atlas and PASE">Insurance, tolls, transport</div>
-          <div class="chip" data-v="Access more than 377 bill-pay services across 42 categories in one app">377+ services, 42 categories</div>
-          <div class="chip" data-v="Add cash to your balance at more than 28,531 cash-in points including 7-Eleven, Soriana and Farmacias del Ahorro">Cash in: 28,531+ points</div>
-          <div class="chip" data-v="Withdraw cash at more than 6,984 cash-out points including Soriana, Kiosko, Willys and SYStienda">Cash out: 6,984+ points</div>
-          <div class="chip" data-v="Check your balance before spending and see your available money">Check balance anytime</div>
-          <div class="chip" data-v="See a clear transaction history of what you pay and receive">Clear transaction history</div>
-          <div class="chip" data-v="Schedule recurring payments so you do not forget regular bills">Schedule recurring payments</div>
-          <div class="chip" data-v="Get cashback on purchases and a $100 welcome cashback reward where the campaign applies">Cashback and $100 welcome</div>
-          <div class="chip" data-v="Get 24/7 backup and support from the __PRODUCT_NAME__ team">24/7 support</div>
-          <div class="chip" data-v="Use a financial app backed by the known Clip brand">Backed by Clip</div>
+          <div class="chip on" data-v="Customer-confirmed product function">Customer-confirmed function</div>
         </div>
         <div class="custom-add-row" id="custom-bnf-row">
-          <input id="custom-bnf-inp" type="text" placeholder="自定义功能点，必须来自客户资料" maxlength="40"
+          <input id="custom-bnf-inp" type="text" placeholder="添加客户资料中确认的功能点" maxlength="40"
             onkeydown="if(event.key==='Enter')addCustomBnf()">
           <button onclick="addCustomBnf()"><i class="ti ti-plus"></i></button>
         </div>
@@ -1265,7 +1242,7 @@ body { background:
   <div class="right" id="right-panel">
     <div class="right-empty" id="right-empty">
       <i class="ti ti-writing"></i>
-      <p>Select a Mexico feature, then generate compliant Spanish Google App Campaign copy for Android.</p>
+      <p>Select a confirmed product function, then generate compliant campaign copy for the selected market and language.</p>
     </div>
 
     <!-- Filter bar (hidden until results exist) -->
@@ -2254,85 +2231,51 @@ function blen(s) {
 // 3. CTA presence   – is there an action verb driving the click?
 // 4. Space usage    – byte utilization efficiency (too short wastes slot, over limit fails)
 
-const HOOK_WORDS = [
-  'discover','find','explore','unlock','join','get','try','see','now','free',
-  'new','best','top','real','true','only','must','why','how','what',
-  'descubre','descarga','instala','encuentra','conoce','prueba','usa','empieza','paga','recarga','consulta',
-  'transfiere','retira','agrega','controla','administra','organiza','revisa','resuelve',
-  'hoy','ahora','facil','claro','tranquilo','seguro','dinero','saldo',
-  '发现','探索','免费','立即','最好','真实','加入','获取','了解','开始',
-  'entdecke','finde','kostenlos','jetzt','beste','echte','neu',
-  'découvrez','trouvez','gratuit','maintenant','meilleur','vrai','nouveau'
-];
-const CTA_WORDS = [
-  'download','install','get','try','join','start','explore','discover','find','see',
-  'shop','browse','learn','watch','read','sign up','open','use',
-  'download now','get it','try it','install now',
-  'descarga','instala','usa','empieza','prueba','conoce','abre','paga','recarga',
-  'consulta','revisa','transfiere','envia','recibe','agrega','deposita','retira',
-  'programa','cobra','maneja','controla','administra',
-  '下载','安装','开始','加入','探索','发现','立即','免费下载','体验',
-  'herunterladen','installieren','jetzt','starten','entdecken',
-  'télécharger','installer','commencer','découvrir','essayer'
-];
+const SCORE_LANGUAGE_TERMS = {
+  en: { hook:['discover','find','explore','unlock','join','get','try','now','new','best','why','how','what'], cta:['download','install','get','try','join','start','explore','discover','shop','learn','open','use','sign up'], forbidden:['miracle','guaranteed','risk-free','number one','safest'] },
+  es: { hook:['descubre','descarga','instala','encuentra','conoce','prueba','usa','empieza','hoy','ahora','facil','claro','por que','como'], cta:['descarga','instala','usa','empieza','prueba','conoce','abre','compra','aprende','registra'], forbidden:['milagro','garantizado','sin riesgo','numero 1','el mejor'] },
+  'es-MX': { hook:['descubre','descarga','instala','encuentra','conoce','prueba','usa','empieza','hoy','ahora','facil','claro','por que','como'], cta:['descarga','instala','usa','empieza','prueba','conoce','abre','compra','aprende','registra'], forbidden:['milagro','garantizado','sin riesgo','numero 1','el mejor'] },
+  'zh-CN': { hook:['发现','探索','免费','立即','最好','真实','加入','获取','了解','开始'], cta:['下载','安装','开始','加入','探索','发现','立即','体验','注册'], forbidden:['保证','无风险','第一','最安全','稳赚'] },
+  'zh-TW': { hook:['發現','探索','免費','立即','最好','真實','加入','取得','了解','開始'], cta:['下載','安裝','開始','加入','探索','發現','立即','體驗','註冊'], forbidden:['保證','無風險','第一','最安全','穩賺'] },
+  fr: { hook:['découvrez','trouvez','gratuit','maintenant','meilleur','vrai','nouveau','pourquoi','comment'], cta:['téléchargez','installez','commencez','découvrez','essayez','ouvrez','inscrivez'], forbidden:['miracle','garanti','sans risque','numéro 1','le meilleur'] },
+  de: { hook:['entdecke','finde','kostenlos','jetzt','beste','echte','neu','warum','wie'], cta:['herunterladen','installieren','jetzt','starten','entdecken','ausprobieren','öffnen'], forbidden:['garantiert','risikofrei','nummer 1','am sichersten'] }
+};
 
-const MI_CLIP_BENEFIT_CONCEPTS = [
-  { keys:['bill','bills','utility','utilities','water','electricity','gas','services','service','cfe','naturgy'], terms:['servicio','servicios','recibo','recibos','agua','luz','gas','cfe','naturgy','ecogas','z-gas','pagar','paga'] },
-  { keys:['airtime','top-up','top-ups','phone','carrier','telcel','movistar','at&t'], terms:['recarga','recargas','celular','telefono','telcel','movistar','at&t','saldo'] },
-  { keys:['balance','available','foresight','spending','money'], terms:['saldo','dinero','disponible','consulta','revisa','antes de gastar','control'] },
-  { keys:['history','transaction','transactions','movement','movements'], terms:['movimientos','historial','transacciones','pagas','recibes'] },
-  { keys:['transfer','transfers','send','receive','account'], terms:['transferencia','transferencias','transfiere','envia','recibe','cuenta'] },
-  { keys:['cash-in','cash in','add cash','deposit','points','7-eleven','soriana','kiosko'], terms:['agrega efectivo','deposita','efectivo','saldo','7-eleven','soriana','kiosko','farmacias del ahorro','puntos'] },
-  { keys:['cash-out','cash out','withdraw','withdrawal'], terms:['retira efectivo','retira','retiro','efectivo','soriana','kiosko','willys'] },
-  { keys:['cashback','reward','rewards','promo','promos'], terms:['cashback','reembolso','recompensa','recompensas','promo','promociones','compras'] },
-  { keys:['contactless','tap','store','payment','payments'], terms:['pago','pagos','sin contacto','tienda','telefono','celular'] },
-  { keys:['school','tuition','education'], terms:['colegiatura','colegiaturas','escuela','escuelas','educacion'] },
-  { keys:['tax','taxes','government','fees'], terms:['predial','tenencia','impuestos','gobierno','tramites'] },
-  { keys:['recurring','schedule','on time','late'], terms:['programa','recurrentes','a tiempo','recuerda','pagos'] },
-  { keys:['support','24/7','help'], terms:['ayuda','soporte','atencion','24/7','respaldo'] },
-  { keys:['clip','backed'], terms:['clip','respaldo'] }
-];
+function scoreLexicon(language='', benefits=[], extra={}) {
+  const base = SCORE_LANGUAGE_TERMS[language] || SCORE_LANGUAGE_TERMS[String(language).split('-')[0]] || SCORE_LANGUAGE_TERMS.en;
+  const terms = (Array.isArray(benefits) ? benefits : []).flatMap(value => normalizeForScore(value).split(/[^\p{L}\p{N}]+/u)).filter(word => word.length > 2);
+  const extraTerms = Array.isArray(extra.score_terms || extra.scoreTerms) ? extra.score_terms || extra.scoreTerms : [];
+  return { hook:base.hook, cta:base.cta, benefit:[...new Set([...terms, ...extraTerms.map(normalizeForScore)])], brand:Array.isArray(extra.brand_terms || extra.brandTerms) ? extra.brand_terms || extra.brandTerms : ['__PRODUCT_NAME__'], forbidden:base.forbidden };
+}
 
-const MI_CLIP_BRAND_TERMS = [
-  'control','tranquilidad','claro','clara','claridad','seguro','segura','confianza',
-  'facil','simple','diario','dia a dia','dinero','saldo','sin salir','desde casa'
-];
+/* Product-specific scoring concepts are intentionally not hard-coded. The customer branch supplies localized benefits/score terms. */
+const LEGACY_PRODUCT_CONCEPTS_REMOVED = [];
 
-const MI_CLIP_CONCRETE_FUNCTION_TERMS = [
-  'paga','pagar','recarga','recargas','consulta','revisa','transfiere','envia',
-  'recibe','agrega','deposita','retira','programa','historial','movimientos',
-  'servicios','recibos','agua','luz','gas','saldo','efectivo','cashback'
-];
-
-const MI_CLIP_HYPERBOLE_TERMS = [
-  'milagro','increible','nunca','jamas','garantizado','asegurado','sin riesgo',
-  'al instante','instantaneo','gratis siempre','el mejor','la mejor','numero 1'
-];
-
-function scoreText(text, type, benefits) {
+function scoreText(text, type, benefits, options={}) {
+  const lexicon = scoreLexicon(options.language || 'en', benefits, options);
   const t   = normalizeForScore(text);
   const max = type === 'short' ? 25 : 75;
   const b   = blen(text);
 
   // 1. Hook (0-10): power word in first third of text
   const firstThird = t.slice(0, Math.ceil(t.length / 3));
-  const hasHook    = HOOK_WORDS.some(w => firstThird.includes(normalizeForScore(w)));
+  const hasHook    = lexicon.hook.some(w => firstThird.includes(normalizeForScore(w)));
   const hasNumber  = /\d/.test(text.slice(0, Math.ceil(text.length / 2)));
   const hasQuestion = text.includes('?');
   const hookScore  = Math.min(10, (hasHook ? 6 : 0) + (hasNumber ? 2 : 0) + (hasQuestion ? 2 : 0));
 
   // 2. Relevance (0-10): benefit keywords present
-  const relScore = miClipRelevanceScore(t, benefits);
+  const relScore = relevanceScore(t, lexicon.benefit);
 
   // 3. CTA (0-10): action verb present
-  const hasCTA   = CTA_WORDS.some(w => t.includes(normalizeForScore(w)));
+  const hasCTA   = lexicon.cta.some(w => t.includes(normalizeForScore(w)));
   const ctaScore = hasCTA ? 10 : (type === 'short' ? 4 : 2); // short headlines less penalized
 
   // 4. Space usage (0-10): sweet spot 75-100% of limit
   const pct = b / max;
   const spaceScore = b > max ? 0 : pct >= 0.75 ? 10 : pct >= 0.55 ? 7 : pct >= 0.35 ? 4 : 2;
 
-  const brandScore = miClipBrandFitScore(t);
+  const brandScore = brandFitScore(t, lexicon.brand, lexicon.benefit, lexicon.forbidden);
   const total = Math.round(hookScore * 0.22 + relScore * 0.34 + ctaScore * 0.18 + spaceScore * 0.10 + brandScore * 0.16);
 
   return { hook: hookScore, rel: relScore, cta: ctaScore, space: spaceScore, brand_fit: brandScore, total };
@@ -2348,29 +2291,17 @@ function normalizeForScore(value) {
     .trim();
 }
 
-function miClipRelevanceScore(normalizedText, benefits) {
-  const selected = Array.isArray(benefits) ? benefits : [];
-  const selectedNeedles = normalizeForScore(selected.join(' ')).split(/[\s,&/()·+.-]+/).filter(w => w.length > 3);
-  const directMatches = selectedNeedles.filter(w => normalizedText.includes(w)).length;
-  let conceptMatches = 0;
-  const selectedText = normalizeForScore(selected.join(' '));
-  MI_CLIP_BENEFIT_CONCEPTS.forEach(group => {
-    const relevant = group.keys.some(key => selectedText.includes(normalizeForScore(key)));
-    if (!relevant) return;
-    if (group.terms.some(term => normalizedText.includes(normalizeForScore(term)))) conceptMatches++;
-  });
-  const concreteMatches = MI_CLIP_CONCRETE_FUNCTION_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
-  const weighted = conceptMatches * 2 + Math.min(2, directMatches) + Math.min(2, concreteMatches);
-  return Math.min(10, weighted >= 6 ? 10 : weighted >= 4 ? 8 : weighted >= 2 ? 6 : concreteMatches ? 5 : 2);
+function relevanceScore(normalizedText, benefitTerms=[]) {
+  const hits = benefitTerms.filter(term => term && normalizedText.includes(normalizeForScore(term))).length;
+  return Math.min(10, hits >= 5 ? 10 : hits >= 3 ? 8 : hits >= 1 ? 6 : 2);
 }
 
-function miClipBrandFitScore(normalizedText) {
-  const brandHits = MI_CLIP_BRAND_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
-  const concreteHits = MI_CLIP_CONCRETE_FUNCTION_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
-  const hyperboleHits = MI_CLIP_HYPERBOLE_TERMS.filter(term => normalizedText.includes(normalizeForScore(term))).length;
-  const vaguePronounPenalty = /\b(esto|eso|esta app|estas funciones)\b/.test(normalizedText) ? 1 : 0;
+function brandFitScore(normalizedText, brandTerms=[], benefitTerms=[], forbidden=[]) {
+  const brandHits = brandTerms.filter(term => normalizedText.includes(normalizeForScore(term))).length;
+  const concreteHits = benefitTerms.filter(term => normalizedText.includes(normalizeForScore(term))).length;
+  const forbiddenHits = forbidden.filter(term => normalizedText.includes(normalizeForScore(term))).length;
   let score = 4 + Math.min(3, brandHits) + Math.min(3, concreteHits);
-  score -= Math.min(4, hyperboleHits * 2 + vaguePronounPenalty);
+  score -= Math.min(4, forbiddenHits * 2);
   return Math.max(0, Math.min(10, score));
 }
 
@@ -2394,7 +2325,7 @@ function card(text, type, region, lang, idx, benefits, langCode, cat) {
   const b     = blen(text);
   const over  = b > max ? '<span class="tag t-warn"><i class="ti ti-alert-triangle" style="font-size:10px"></i> Over limit</span>' : '';
   const safe  = text.replace(/\\/g,'\\\\').replace(/`/g,'\\`');
-  const sc    = scoreText(text, type, benefits || []);
+  const sc    = scoreText(text, type, benefits || [], { language: langCode });
   const tcls  = scoreColor(sc.total);
   const needsTranslation = langCode && !['zh-TW','zh-CN','en'].includes(langCode);
   const transBlock = needsTranslation ? `
@@ -2768,11 +2699,8 @@ function getTargets() {
 }
 
 function buildPrompt(regions, lang, device, cat, benefits, type, tone, qty, targets) {
-  const lmap = { 'es-MX':'Mexican Spanish', es:'Mexican Spanish' };
-  const rmap = { MX:'Mexico' };
-  const regionsMx = ['MX'];
-  const langMx = 'es-MX';
-  const rstr = regionsMx.map(r => rmap[r] || r).join(', ');
+  const lmap = { 'es-MX':'Mexican Spanish', es:'Spanish', en:'English', 'en-US':'US English', 'zh-CN':'Simplified Chinese', 'zh-TW':'Traditional Chinese', fr:'French', de:'German', pt:'Portuguese', ja:'Japanese', ko:'Korean' };
+  const rstr = regions.join(', ');
   const dev  = device === 'ios' ? 'iOS' : device === 'both' ? 'iOS and Android' : 'Android';
   const tstr = type === 'short'
     ? `${qty} short headlines (each <=25 bytes)`
@@ -2781,10 +2709,8 @@ function buildPrompt(regions, lang, device, cat, benefits, type, tone, qty, targ
     : `${qty} short headlines (each <=25 bytes) AND ${qty} long descriptions (each <=75 bytes)`;
 
   const hints = [
-    regions.includes('MX') ? 'Mexican users may live with limited or variable income and need clarity, control, calm, and practical help for daily money friction.' : '',
-    regions.includes('US') ? 'Use general payment-utility wording only; do not imply availability outside user-supplied markets.' : '',
-    (regions.includes('UK') || regions.includes('DE') || regions.includes('FR') || regions.includes('NL'))
-      ? 'European users appreciate clarity, control, and non-pushy financial wording. Avoid unsupported security, fee, speed, and approval claims.' : ''
+    'Use only customer-confirmed product facts and supplied audience/market context.',
+    'Do not infer category-specific features from the template.'
   ].filter(Boolean).join(' ');
 
   const tg = targets || { hook:6, rel:6, cta:7, space:5, total:7 };
@@ -2792,18 +2718,18 @@ function buildPrompt(regions, lang, device, cat, benefits, type, tone, qty, targ
   const scoreGuide = `
 QUALITY SCORING SYSTEM (use this to self-evaluate each copy before output):
 Each dimension is scored 0–10. Your copy MUST meet these minimum targets:
-- Hook ≥ ${tg.hook}/10: Opening must grab attention with natural Mexican Spanish, such as Descarga, Usa, Paga, Recarga, Consulta, Revisa, Transfiere, Agrega, Retira, Programa, Conoce, a useful number, or a simple question in the first third.
-- Relevance ≥ ${tg.rel}/10: Must include the selected __PRODUCT_NAME__ function in es-MX, such as pagar servicios, recargar celular, consultar saldo, transferir, agregar efectivo, retirar efectivo, revisar movimientos, or programar pagos.
-- CTA ≥ ${tg.cta}/10: Must include a clear Mexican Spanish action verb such as Descarga, Usa, Paga, Recarga, Consulta, Revisa, Transfiere, Agrega, Retira, Programa, or Conoce. Headlines without a CTA score 4 or below.
+- Hook ≥ ${tg.hook}/10: Opening must grab attention with a natural hook in the requested language, a useful number, or a simple question in the first third.
+- Relevance ≥ ${tg.rel}/10: Must include one concrete customer-confirmed product function from the selected benefits in the requested language.
+- CTA ≥ ${tg.cta}/10: Must include a clear action verb for the requested language and market. Headlines without a CTA score 4 or below.
 - Space use ≥ ${tg.space}/10: Aim for 75–100% of the byte limit. Under 35% of limit scores 2. Over limit scores 0.
 - Overall weighted score ≥ ${tg.total}/10: Hook, product relevance, CTA, space use, and __PRODUCT_NAME__ brand fit.
 
 Before finalizing each copy, mentally score it. If it falls below any target, rewrite it until it passes. Only output copy that meets ALL targets.`;
 
-  return `You are a senior Google Ads specialist creating compliant, conversion-oriented copy for __PRODUCT_NAME__ — a personal finance app that helps people in Mexico manage everyday money, payments, bills, transfers, and cash access — targeting ${rstr}.
+  return `You are a senior Google Ads specialist creating compliant, conversion-oriented copy for __PRODUCT_NAME__ — a product-specific advertising tool using only customer-confirmed facts — targeting ${rstr}.
 
 Platform: Google App Campaign ads for ${dev}
-Language: ${lmap[langMx] || 'Mexican Spanish'}
+Language: ${lmap[lang] || lang}
 Category: ${cat}
 Selected product functions to highlight: ${benefits.join(', ')}
 Tone: ${tone}
@@ -2817,13 +2743,12 @@ ${scoreGuide}
 COPYWRITING RULES:
 - Headlines: clear, benefit-first, easy to understand. No filler.
 - Descriptions: practical daily money benefit + natural CTA. Specific to the selected job-to-be-done, not generic.
-- Write about the selected concrete product functions only. Do not turn abstract jobs like control or tranquilidad into standalone claims; connect them to a real action such as paying utilities, topping up airtime, checking balance, transferring money, paying services, adding cash, withdrawing cash, reviewing transactions, or scheduling recurring payments.
-- Supported __PRODUCT_NAME__ function facts: water/electricity/gas bill pay; phone airtime top-ups; contactless store payments; pay from home; internet/phone/TV providers; tuition/school payments; taxes/government fees; catalog sales payments; insurance/tolls/transport payments; 377+ bill-pay services in 42 categories; transfers to any account; 28,531+ cash-in points; 6,984+ cash-out points; balance checks; transaction history; recurring payments; cashback on purchases; $100 welcome cashback where campaign terms apply; 24/7 support; backed by Clip.
+- Write about the selected concrete product functions only. Do not invent or assume category-specific features. Treat supplied benefits and product facts as the complete source of truth.
 - Do NOT invent licenses, regulated status, bank partnerships, card-network relationships, security certifications, encryption standards, fee advantages, exchange-rate advantages, arrival speed, approval likelihood, savings guarantees, cashback amounts beyond supplied facts, rewards beyond supplied facts, investment returns, risk-free claims, or guaranteed approval.
 - Local market context: ${hints}
 - Do NOT use exclamation marks.
 - Every copy must be unique and varied — no repetition.
-- Use natural Mexican Spanish only, with simple words a Mexican Android user would understand.
+- Use natural ${lmap[lang] || lang} only, with wording appropriate for the supplied market and audience.
 - Never present roadmap-only items as live features. If evidence is missing, keep it as a neutral scenario rather than a product claim.
 
 Respond ONLY with valid JSON, no markdown, no preamble:
