@@ -54,10 +54,20 @@ def cf_request(method, path, token, **kwargs):
 def pick_account(token):
     accounts = cf_request("GET", "/accounts", token)
     if not accounts:
-        raise RuntimeError("No Cloudflare account is available for this API token.")
+        raise RuntimeError("没有找到可用的 Cloudflare 账号，请确认 Token 有账号读取权限。")
+    preferred_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "").strip()
+    if not preferred_id:
+        account_path = ROOT / ".secrets" / "cloudflare_account_id.txt"
+        if account_path.exists():
+            preferred_id = account_path.read_text(encoding="utf-8").strip()
+    if preferred_id:
+        for account in accounts:
+            if account.get("id") == preferred_id:
+                return account
+        raise RuntimeError("已保存的 Cloudflare 账号不在当前 Token 可用范围内，请运行 deploy.ps1 -Reconfigure 重新选择。")
     if len(accounts) > 1:
         names = ", ".join(f"{a.get('name')} ({a.get('id')})" for a in accounts)
-        print(f"Multiple accounts found; using the first one: {names}")
+        print(f"找到多个账号但没有保存选择，将使用第一个：{names}")
     return accounts[0]
 
 
