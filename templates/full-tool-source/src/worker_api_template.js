@@ -1,4 +1,5 @@
 ﻿const INDEX_HTML = __INDEX_HTML_JSON__;
+const TOOL_VERSION = "__TOOL_VERSION__";
 const APP_SECRET = __APP_SECRET_JSON__;
 const DEFAULT_MODEL_OPENAI = "deepseek-chat";
 const DEFAULT_MODEL_ANTHROPIC = "claude-sonnet-4-6";
@@ -1669,6 +1670,9 @@ export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
     const url = new URL(request.url);
+    if (url.pathname === "/api/version" && request.method === "GET") {
+      return jsonResponse({ success: true, version: TOOL_VERSION, update_url: new URL("/", request.url).toString() });
+    }
     if (url.pathname === "/api/schema") return jsonResponse(apiSchema(request));
     if (url.pathname === "/api/openapi.json") return jsonResponse(openApiSpec(request));
     if (url.pathname === "/api/auth/register" && request.method === "POST") return handleRegister(request, env);
@@ -1702,8 +1706,6 @@ export default {
     return htmlResponse();
   }
 };
-
-
 
 
 

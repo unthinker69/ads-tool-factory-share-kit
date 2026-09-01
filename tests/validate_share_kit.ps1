@@ -17,6 +17,7 @@ $required = @(
   "templates\full-tool-source\src\worker_api_template.js",
   "templates\full-tool-source\scripts\deploy.ps1",
   "templates\full-tool-source\scripts\setup_cloudflare.ps1",
+  "templates\full-tool-source\version.txt",
   "templates\full-tool-source\scripts\deploy_via_api.py",
   "templates\full-tool-source\scripts\build_worker.mjs",
   "templates\full-tool-source\package.json",

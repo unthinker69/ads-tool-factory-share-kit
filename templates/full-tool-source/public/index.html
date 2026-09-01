@@ -118,6 +118,18 @@ body {
 .key-mgr-btn:hover { color: var(--text); border-color: var(--text-3); }
 .key-mgr-btn i { font-size: 12px; }
 
+.update-banner {
+  display:none; align-items:center; gap:8px; padding:8px 12px;
+  background:#fff7df; border-bottom:1px solid #efd27a; color:#6b4d00;
+  font-size:12px; line-height:1.4;
+}
+.update-banner.show { display:flex; }
+.update-banner button {
+  margin-left:auto; border:0; border-radius:6px; padding:5px 10px;
+  background:#b77900; color:#fff; cursor:pointer; font:inherit; white-space:nowrap;
+}
+.update-banner .update-dismiss { margin-left:0; background:transparent; color:#6b4d00; padding:3px 5px; }
+
 /* ── Layout ── */
 .layout {
   display: flex;
@@ -914,6 +926,12 @@ body { background:
 </head>
 <body>
 
+<div id="update-banner" class="update-banner">
+  <span id="update-message">发现新版本，更新不会清除已保存的 API Key。</span>
+  <button onclick="applyToolUpdate()">立即更新</button>
+  <button class="update-dismiss" onclick="dismissToolUpdate()">稍后</button>
+</div>
+
 <!-- Modal -->
 <div id="modal-bg" class="modal-bg" onclick="closeModal(event)">
   <div class="modal">
@@ -1042,6 +1060,7 @@ body { background:
     <div class="key-dot" id="key-dot"></div>
     <span class="key-label" id="key-label">未设置 API Key</span>
     <button class="key-mgr-btn" onclick="openModal()"><i class="ti ti-key"></i> 管理 Key</button>
+    <button class="key-mgr-btn" onclick="checkForToolUpdate(true)" title="检查更新"><i class="ti ti-refresh"></i> 检查更新</button>
   </div>
 </div>
 
@@ -1296,6 +1315,50 @@ body { background:
 </div><!-- /layout -->
 
 <script>
+const APP_VERSION = "__TOOL_VERSION__";
+const UPDATE_MANIFEST_URL = window.location.protocol === 'file:' ? '' : new URL('/api/version', window.location.origin).toString();
+let pendingToolUpdate = null;
+
+function versionParts(value) {
+  return String(value || '0').replace(/^v/i, '').split(/[.-]/).map(v => Number.parseInt(v, 10) || 0);
+}
+function isNewerVersion(remote, local) {
+  const a = versionParts(remote), b = versionParts(local);
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    if ((a[i] || 0) !== (b[i] || 0)) return (a[i] || 0) > (b[i] || 0);
+  }
+  return false;
+}
+async function checkForToolUpdate(showCleanMessage = false) {
+  if (!UPDATE_MANIFEST_URL) return;
+  try {
+    const r = await fetch(UPDATE_MANIFEST_URL, { cache: 'no-store' });
+    const data = await r.json();
+    if (!r.ok || !data.success || !data.version) throw new Error('version check failed');
+    if (isNewerVersion(data.version, APP_VERSION)) {
+      pendingToolUpdate = data;
+      const banner = document.getElementById('update-banner');
+      const message = document.getElementById('update-message');
+      if (message) message.textContent = `发现新版本 ${data.version}（当前 ${APP_VERSION}），更新不会清除已保存的 API Key。`;
+      if (banner) banner.classList.add('show');
+    } else if (showCleanMessage) {
+      alert('当前已经是最新版本。');
+    }
+  } catch (_) {
+    if (showCleanMessage) alert('暂时无法检查更新，不影响工具正常使用。');
+  }
+}
+function applyToolUpdate() {
+  if (!pendingToolUpdate) return;
+  const target = pendingToolUpdate.update_url || window.location.href;
+  window.location.href = target + (target.includes('?') ? '&' : '?') + 'refresh=' + Date.now();
+}
+function dismissToolUpdate() {
+  const banner = document.getElementById('update-banner');
+  if (banner) banner.classList.remove('show');
+  sessionStorage.setItem('tool_update_dismissed', pendingToolUpdate?.version || '');
+}
+
 // ── API Key Manager ──────────────────────────────────────────────
 function loadKeys() {
   try { return JSON.parse(localStorage.getItem('mc_keys') || '[]'); } catch(e) { return []; }
@@ -2103,6 +2166,7 @@ function closeModalDirect() { document.getElementById('modal-bg').classList.remo
 function closeModal(e)      { if (e.target === document.getElementById('modal-bg')) closeModalDirect(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
 document.addEventListener('DOMContentLoaded', () => {
+  checkForToolUpdate();
   renderCloudStatus();
   renderKeyBar();
   renderApiStatus();
@@ -3167,8 +3231,6 @@ async function batchRegen() {
 </script>
 </body>
 </html>
-
-
 
 
 

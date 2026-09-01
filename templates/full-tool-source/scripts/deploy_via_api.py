@@ -72,14 +72,17 @@ def pick_account(token):
 
 
 def build_worker_script():
-    html = HTML_PATH.read_text(encoding="utf-8")
     template_path = ROOT / "src" / "worker_api_template.js"
     template = template_path.read_text(encoding="utf-8")
     app_secret = get_or_create_app_secret()
+    version_path = ROOT / "version.txt"
+    version = version_path.read_text(encoding="utf-8").strip() if version_path.exists() else "1.0.0"
+    html = HTML_PATH.read_text(encoding="utf-8").replace("__TOOL_VERSION__", version)
     return (
         template
         .replace("__INDEX_HTML_JSON__", json.dumps(html, ensure_ascii=False))
         .replace("__APP_SECRET_JSON__", json.dumps(app_secret))
+        .replace("__TOOL_VERSION__", version)
     )
 
 
