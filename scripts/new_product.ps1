@@ -35,7 +35,9 @@ $sourceDir = Join-Path $productDir "source"
 Copy-Item -LiteralPath $sourceTemplateDir -Destination $sourceDir -Recurse -Force
 
 $workerName = "$safeSlug-ads-generator"
-$kvTitle = "$($safeSlug -replace '-', '_')_ads_generator_config"
+# All generated tools use the canonical shared account/profile store. Product
+# isolation is enforced by provider_pool:<product-slug>:<userId> in the Worker.
+$kvTitle = "rednote_ads_generator_config"
 $brandWords = $DisplayName -split '\s+' | Where-Object { $_ }
 if ($brandWords.Count -ge 2) {
   $brandMark = (($brandWords | Select-Object -First 2) -join '<br>')

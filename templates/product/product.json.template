@@ -10,8 +10,15 @@
   "api_contract": "../../core/worker_contract.md",
   "shared_modules": [
     "score-control",
-    "provider-pool"
+    "provider-pool",
+    "shared-account-profiles"
   ],
+  "account_store": {
+    "shared": true,
+    "kv_title": "rednote_ads_generator_config",
+    "profile_records": ["user:*", "user_name:*", "token:*", "profiles:<userId>"],
+    "provider_pool_key": "provider_pool:<product-slug>:<userId>"
+  },
   "distribution_policy": {
     "branch_optimizations_default": "local_only",
     "distribution_requires_explicit_owner_approval": true
@@ -22,4 +29,3 @@
     "Do not break saved model profiles or provider pool data."
   ]
 }
-
