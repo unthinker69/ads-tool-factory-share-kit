@@ -10,6 +10,8 @@ Before shipping or deploying a product tool:
 - [ ] `/api/schema` returns successfully.
 - [ ] `/api/openapi.json` returns successfully.
 - [ ] Account login or personal tool account flow works if the product supports cloud profiles.
+- [ ] The product uses its factory instance's private shared account/profile KV and the same `worker_app_secret` as the other tools in that factory unless an approved isolation exception exists; it never points to a maintainer's or another owner's KV.
+- [ ] Logging in with an account created by another connected tool exposes the shared profiles; the product's provider pool remains product-local.
 - [ ] User BYOK remains per-user, not shared globally.
 - [ ] Provider profile management supports model name, API base URL, API key, compatibility mode, and relay/newapi JSON connection parsing.
 - [ ] Model discovery/sniffing is available where the provider endpoint supports it.

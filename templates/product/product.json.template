@@ -15,7 +15,7 @@
   ],
   "account_store": {
     "shared": true,
-    "kv_title": "rednote_ads_generator_config",
+    "kv_title": "{{shared_kv_title}}",
     "profile_records": ["user:*", "user_name:*", "token:*", "profiles:<userId>"],
     "provider_pool_key": "provider_pool:<product-slug>:<userId>"
   },

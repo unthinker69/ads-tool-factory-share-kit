@@ -22,7 +22,7 @@ When adapting this source for a product, preserve the GUI structure and all base
 Allowed product changes:
 
 - `__PRODUCT_NAME__`, `__PRODUCT_SLUG__`, `__BRAND_MARK__`, `__WORKER_NAME__`, and `__KV_TITLE__` replacements.
-- Generated products use the canonical shared account/profile KV by default. Set `SHARED_APP_SECRET_FILE` during deployment to the canonical Worker app-secret file; product pool keys remain product-specific.
+- Generated products use the private shared account/profile KV created for that factory instance. Tools from the same factory share it; different factory owners do not. Product pool keys remain product-specific.
 - Top-left brand block, product display name, badge text, and theme colors.
 - Default country, language, platform, categories/jobs, benefits/functions, tone, examples, and empty states.
 - Prompt rules, product facts, compliance limits, scoring dictionaries, and API examples.

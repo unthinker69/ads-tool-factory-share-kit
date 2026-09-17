@@ -12,7 +12,7 @@ import requests
 API = "https://api.cloudflare.com/client/v4"
 WORKER_NAME = "__WORKER_NAME__"
 KV_TITLE = "__KV_TITLE__"
-SHARED_APP_SECRET_FILE = os.environ.get("SHARED_APP_SECRET_FILE", "").strip()
+SHARED_APP_SECRET_FILE = os.environ.get("SHARED_APP_SECRET_FILE", r"__SHARED_APP_SECRET_FILE__").strip()
 ROOT = Path(__file__).resolve().parents[1]
 HTML_PATH = ROOT / "public" / "index.html"
 
@@ -95,6 +95,11 @@ def get_or_create_app_secret():
         value = shared_path.read_text(encoding="utf-8").strip()
         if value:
             return value
+    if shared_path:
+        shared_path.parent.mkdir(parents=True, exist_ok=True)
+        value = base64.urlsafe_b64encode(secrets.token_bytes(48)).decode("ascii")
+        shared_path.write_text(value, encoding="utf-8")
+        return value
     secret_path = secret_dir / "worker_app_secret.txt"
     if secret_path.exists():
         value = secret_path.read_text(encoding="utf-8").strip()

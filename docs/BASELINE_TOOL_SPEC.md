@@ -12,6 +12,7 @@ Every product generated from this share-kit must start from the same complete ad
 - Concurrent generation: batch generation can route work across active model-pool members instead of forcing one model for all jobs.
 - Agent-sticky assignment: external AI callers can pass an `agent_id` so each agent can consistently use one assigned pool member.
 - Cloud account and personal API token flow: users can create or log into their own tool account, save provider profiles and model pools to that account, and generate a personal API token for external AI calls.
+- Shared account baseline: generated tools must use the private account/profile store created for their factory instance, so the same account, personal token, and saved model profiles work across tools in that factory; different factory owners must never share it, and only the provider-pool selection is product-local.
 - External AI API: the deployed Worker exposes machine-callable endpoints, including schema/OpenAPI discovery, generation, scoring, provider-pool status, and documented examples.
 - Quantity control: API callers can request variable output quantity up to the documented maximum, currently 50 per requested type unless a product has an explicit lower compliance limit.
 - Score control: generation supports minimum score targets, candidate ranking, quality goals, retry history, and dynamic retry guidance based on deterministic scoring failures.

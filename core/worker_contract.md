@@ -35,7 +35,9 @@ Web UI 中存在的账号、BYOK、provider profile、model discovery、model po
 
 ## 共享账号与模型档案标准
 
-需要打通账号的产品工具应绑定同一个账号配置 KV，并共享这些记录：`user:*`、`user_name:*`、`token:*`、`profiles:<userId>`。产品自己的模型池选择必须使用产品专属 key，例如 `provider_pool:<product-slug>:<userId>`，不得写入其他产品的 pool 字段。
+共享账号是同一工厂实例内生成产品的默认行为，不是可由实现者自行判断的可选能力。每个用户首次初始化工厂时必须生成自己的共享账号配置 KV 和 `worker_app_secret`；除非产品负责人明确批准“账号隔离”例外，同一工厂的新产品必须绑定这套私有配置，并共享这些记录：`user:*`、`user_name:*`、`token:*`、`profiles:<userId>`。不同工厂实例、不同用户不得使用同一套 KV。产品自己的模型池选择必须使用产品专属 key，例如 `provider_pool:<product-slug>:<userId>`，不得写入其他产品的 pool 字段。
+
+因此，同一工厂内的产品应直接复用同一套账号密码、登录会话、personal API token 和共享模型档案；不能把“云账号登录”实现为每个产品重新注册一套账号。部署配置必须从该工厂的 `factory_config.json` 明确读取私有 KV 名称和私有 `worker_app_secret` 路径；如果没有工厂配置，部署必须失败并提示初始化，而不能静默生成产品独立密钥或使用维护者的 KV。
 
 共享 `profiles` 时，所有接入同一 KV 的 Worker 必须使用同一个 `worker_app_secret`，否则只能看到模型档案但无法解密调用 API key。前端应把共享 profiles 显示为“共享云模型”，支持刷新、选择为当前模型、加入/移出本产品模型池；删除共享云模型必须提示会影响其他接入同一账号资料的工具。
 
